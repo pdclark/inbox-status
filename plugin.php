@@ -10,6 +10,11 @@ Author URI: http://brainstormmedia.com/
 add_action( 'init', 'Storm_Unread_Gmail::get_instance' );
 
 class Storm_Unread_Gmail {
+
+	/**
+	 * Plugin version. Used for cache-busting scripts.
+	 */
+	public $version = '1.0';
 	
 	/**
 	 * @var Storm_Unread_Gmail Instance of the class.
@@ -62,7 +67,13 @@ class Storm_Unread_Gmail {
 		add_action( 'wp_ajax_nopriv_unread-gmail-count', array( $this, 'wp_ajax_unread_gmail_count' ) );
 		
 		add_filter( 'http_request_args', array( $this, 'http_request_args' ), 10, 2 );
+
+		add_action( 'wp_print_scripts', array( $this, 'wp_print_scripts' ) );
 		
+	}
+
+	public function wp_print_scripts() {
+		wp_enqueue_script( 'gmail-unread-count', plugins_url( 'unread-count.js', __FILE__ ), array( 'jquery' ), $this->version, true );
 	}
 
 	public function wp_ajax_unread_gmail_count() {

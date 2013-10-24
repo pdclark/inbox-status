@@ -9,4 +9,4 @@
 */
 
 require_once( 'class.BlobImap.php' );
-require_once( 'class.EmailWidget.php ' );
+require_once( 'class.EmailWidget.php' );

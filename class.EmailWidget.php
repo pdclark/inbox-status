@@ -13,7 +13,7 @@ class BlobEmailWidget extends WP_Widget {
 		'server' => '',
 		'user' => '',
 		'title' => '',
-		'pass' => '',
+		'password' => '',
 	    );
 	    $instance = wp_parse_args( $instance, $defaults );
 
@@ -41,7 +41,7 @@ class BlobEmailWidget extends WP_Widget {
 		'server' => '',
 		'user' => '',
 		'title' => '',
-		'pass' => '',
+		'password' => '',
 	    );
 
 	    $instance = wp_parse_args( $instance, $defaults );
@@ -73,11 +73,11 @@ class BlobEmailWidget extends WP_Widget {
 		/>
 	    </p>
 	    <p>
-		<label for="<?php echo $this->get_field_id( 'pass' ); ?>"><?php _e( 'Pass:' );?></label>
+		<label for="<?php echo $this->get_field_id( 'password' ); ?>"><?php _e( 'Password:' );?></label>
 		<input class="widefat"
-			name="<?php echo $this->get_field_name( 'pass' ); ?>"
+			name="<?php echo $this->get_field_name( 'password' ); ?>"
 			type="text"
-			value="<?php echo esc_attr( $instance['pass'] ); ?>"
+			value="<?php echo esc_attr( $instance['password'] ); ?>"
 		/>
 	    </p>
 	    <?php 

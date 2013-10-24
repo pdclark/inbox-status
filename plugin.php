@@ -35,6 +35,6 @@ function storm_inbox_status_init() {
   require_once dirname ( __FILE__ ) . '/classes/class-email-widget.php';
 	require_once dirname ( __FILE__ ) . '/classes/class-inbox-status.php';
 
-  Storm_Inbox_Status::get_instance();
+  IS_Inbox_Status::get_instance();
 
 }

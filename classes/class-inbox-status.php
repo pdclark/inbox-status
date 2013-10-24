@@ -5,7 +5,7 @@
  * 
  * @author Paul Clark <http://brainstormmedia.com>
  */
-class Storm_Inbox_Status {
+class IS_Inbox_Status {
 
 	/**
 	 * @var Storm_Inbox_Status Instance of the class.
@@ -67,7 +67,7 @@ class Storm_Inbox_Status {
 	}
 
 	public function widgets_init() {
-		register_widget( 'Blob_Email_Widget' );
+		register_widget( 'IS_Email_Widget' );
 	}
 
 	public function wp_print_scripts() {

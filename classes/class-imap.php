@@ -3,7 +3,7 @@
 /**
  * @author Ben Lobaugh <http://ben.lobaugh.net>
  */
-class BlobImap {
+class IS_IMAP {
 
     private $mServer;
 

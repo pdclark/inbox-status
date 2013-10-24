@@ -3,7 +3,7 @@
 /**
  * @author Ben Lobaugh <http://ben.lobaugh.net>
  */
-class Blob_Email_Widget extends WP_Widget {
+class IS_Email_Widget extends WP_Widget {
 
 	public function __construct() {
 	    parent::WP_Widget( false, $name = __( 'Email Count', 'blob_email_count' ) );
@@ -18,7 +18,7 @@ class Blob_Email_Widget extends WP_Widget {
 	    );
 	    $instance = wp_parse_args( $instance, $defaults );
 
-	    $e = new BlobImap();
+	    $e = new IS_IMAP();
 	    $e->create_connection( $instance['server'], $instance['user'], $instance['pass'] );
 
 

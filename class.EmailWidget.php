@@ -3,6 +3,7 @@
 class BlobEmailWidget extends WP_Widget {
 
 	public function __construct() {
+	    parent::WP_Widget( false, $name = __( 'Email Count', 'blob_email_count' ) );
 	}
 
         public function widget( $args, $instance ) {

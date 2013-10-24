@@ -1,11 +1,9 @@
 <?php
 
-require_once( 'class.BlobImap.php' );
-
 /**
  * @author Ben Lobaugh <http://ben.lobaugh.net>
  */
-class BlobEmailWidget extends WP_Widget {
+class Blob_Email_Widget extends WP_Widget {
 
 	public function __construct() {
 	    parent::WP_Widget( false, $name = __( 'Email Count', 'blob_email_count' ) );
@@ -87,7 +85,3 @@ class BlobEmailWidget extends WP_Widget {
 	}
 
 } // end class
-
-add_action( 'widgets_init', function(){
-         register_widget( 'BlobEmailWidget' );
-});

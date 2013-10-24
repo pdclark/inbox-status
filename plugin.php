@@ -11,7 +11,7 @@
 define( 'INBOX_STATUS_PLUGIN_FILE', __FILE__ );
 define( 'INBOX_STATUS_VERSION', '0.1' );
 
-add_action( 'init', 'storm_inbox_status_init' );
+add_action( 'plugins_loaded', 'storm_inbox_status_init' );
 
 function storm_inbox_status_init() {
 	
@@ -25,13 +25,16 @@ function storm_inbox_status_init() {
     if ( $okay_to_exit ) {
       require_once ABSPATH . '/wp-admin/includes/plugin.php';
       deactivate_plugins( __FILE__ );
-      wp_die( sprintf( __( 'Menu Social Icons requires PHP 5.2 or higher, as does WordPress 3.2 and higher. The plugin has now disabled itself. For information on upgrading, %ssee this article%s.', 'menu-social-icons'), '<a href="http://codex.wordpress.org/Switching_to_PHP5" target="_blank">', '</a>') );
+      wp_die( sprintf( __( 'Inbox Status requires PHP 5.2 or higher, as does WordPress 3.2 and higher. The plugin has now disabled itself. For information on upgrading, %ssee this article%s.', 'menu-social-icons'), '<a href="http://codex.wordpress.org/Switching_to_PHP5" target="_blank">', '</a>') );
     } else {
       return;
     }
 	}
 
 	require_once dirname ( __FILE__ ) . '/classes/class-imap.php';
-	require_once dirname ( __FILE__ ) . '/classes/class-email-widget.php';
+  require_once dirname ( __FILE__ ) . '/classes/class-email-widget.php';
+	require_once dirname ( __FILE__ ) . '/classes/class-inbox-status.php';
+
+  Storm_Inbox_Status::get_instance();
 
 }

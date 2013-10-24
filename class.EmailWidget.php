@@ -17,7 +17,7 @@ class BlobEmailWidget extends WP_Widget {
 	    );
 	    $instance = wp_parse_args( $instance, $defaults );
 
-	    $e = BlobImap();
+	    $e = new BlobImap();
 	    $e->create_connection( $instance['server'], $instance['user'], $instance['pass'] );
 
 

@@ -9,6 +9,9 @@ Author URI: http://brainstormmedia.com/
 
 add_action( 'init', 'Storm_Unread_Gmail::get_instance' );
 
+/**
+ * @author Paul Clark <http://brainstormmedia.com>
+ */
 class Storm_Unread_Gmail {
 
 	/**

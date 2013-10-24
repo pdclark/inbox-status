@@ -2,6 +2,9 @@
 
 require_once( 'class.BlobImap.php' );
 
+/**
+ * @author Ben Lobaugh <http://ben.lobaugh.net>
+ */
 class BlobEmailWidget extends WP_Widget {
 
 	public function __construct() {

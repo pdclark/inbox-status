@@ -1,11 +1,11 @@
 <?php
 /*
-    Plugin Name: Inbox Status 
-    Plugin URI: https://github.com/blobaugh/inbox-status
-    Description: Easy widget and functions to show email counts in your theme (Like unread email)
-    Version: 0.1
-    Author: Ben Lobaugh
-    Author URI: http://ben.lobaugh.net
+  Plugin Name: Inbox Status 
+  Plugin URI: https://github.com/brainstormmedia/inbox-status/settings
+  Description: Easy widget and functions to show email counts in your theme (like unread email).
+  Version: 0.1
+  Author: Brainstorm Media
+  Author URI: http://brainstormmedia.com
 */
 
 require_once( 'class.BlobImap.php' );

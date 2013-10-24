@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @author Ben Lobaugh <http://ben.lobaugh.net>
+ */
 class BlobImap {
 
     private $mServer;

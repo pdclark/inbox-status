@@ -27,7 +27,7 @@ class BlobEmailWidget extends WP_Widget {
 	    echo "<p>";
 	    echo $e->count_unread() . '/' . $e->count_all();
 	    echo "<br/>Unread/All";
-	    echo "</p>":
+	    echo "</p>";
 
 	    echo $args['after_widget'];
 	    

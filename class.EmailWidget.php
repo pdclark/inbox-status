@@ -80,7 +80,6 @@ class BlobEmailWidget extends WP_Widget {
 	    <?php 
 	}
 
-									    }
 } // end class
 
 add_action( 'widgets_init', function(){

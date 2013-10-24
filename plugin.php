@@ -1,132 +1,37 @@
 <?php
 /*
-Plugin Name: Unread Gmail
-Description: Display unread email count from a Gmail account.
-Version: 1.0.0
-Author: Brainstorm Media
-Author URI: http://brainstormmedia.com/
+  Plugin Name: Inbox Status 
+  Plugin URI: https://github.com/brainstormmedia/inbox-status/settings
+  Description: Easy widget and functions to show email counts in your theme (like unread email).
+  Version: 0.1
+  Author: Brainstorm Media
+  Author URI: http://brainstormmedia.com
 */
 
-add_action( 'init', 'Storm_Unread_Gmail::get_instance' );
+define( 'INBOX_STATUS_PLUGIN_FILE', __FILE__ );
+define( 'INBOX_STATUS_VERSION', '0.1' );
 
-/**
- * @author Paul Clark <http://brainstormmedia.com>
- */
-class Storm_Unread_Gmail {
+add_action( 'init', 'storm_inbox_status_init' );
 
-	/**
-	 * Plugin version. Used for cache-busting scripts.
-	 */
-	public $version = '1.0';
+function storm_inbox_status_init() {
 	
-	/**
-	 * @var Storm_Unread_Gmail Instance of the class.
-	 */
-	private static $instance = false;
+	// PHP Version Check
+	$php_is_outdated = version_compare( PHP_VERSION, '5.2', '<' );
 
-	/**
-	 * @var string Gmail username
-	 */
-	private $username;
-
-	/**
-	 * @var string Gmail password
-	 */
-	private $password;
-
-	/**
-	 * @var string URL to Gmail atom feed
-	 */
-	private $atom_feed_url = 'https://mail.google.com/mail/feed/atom';
+	// Only exit and warn if on admin page
+	$okay_to_exit = is_admin() && ( !defined('DOING_AJAX') || !DOING_AJAX );
 	
-	/**
-	 * Don't use this. Use ::get_instance() instead.
-	 */
-	public function __construct() {
-		if ( !self::$instance ) {
-			$message = '<code>' . __CLASS__ . '</code> is a singleton.<br/> Please get an instantiate it with <code>' . __CLASS__ . '::get_instance();</code>';
-			wp_die( $message );
-		}       
-	}
-	
-	public static function get_instance() {
-		if ( !is_a( self::$instance, __CLASS__ ) ) {
-			self::$instance = true;
-			self::$instance = new self();
-			self::$instance->init();
-		}
-		return self::$instance;
-	}
-	
-	/**
-	 * Initial setup. Called by get_instance.
-	 */
-	protected function init() {
-
-		$this->username = apply_filters( 'unread_gmail_username', '' );
-		$this->password = apply_filters( 'unread_gmail_password', '' );
-
-		add_action( 'wp_ajax_unread-gmail-count', array( $this, 'wp_ajax_unread_gmail_count' ) );
-		add_action( 'wp_ajax_nopriv_unread-gmail-count', array( $this, 'wp_ajax_unread_gmail_count' ) );
-		
-		add_filter( 'http_request_args', array( $this, 'http_request_args' ), 10, 2 );
-
-		add_action( 'wp_print_scripts', array( $this, 'wp_print_scripts' ) );
-		
+	if ( $php_is_outdated ) {
+    if ( $okay_to_exit ) {
+      require_once ABSPATH . '/wp-admin/includes/plugin.php';
+      deactivate_plugins( __FILE__ );
+      wp_die( sprintf( __( 'Menu Social Icons requires PHP 5.2 or higher, as does WordPress 3.2 and higher. The plugin has now disabled itself. For information on upgrading, %ssee this article%s.', 'menu-social-icons'), '<a href="http://codex.wordpress.org/Switching_to_PHP5" target="_blank">', '</a>') );
+    } else {
+      return;
+    }
 	}
 
-	public function wp_print_scripts() {
-		wp_enqueue_script( 'gmail-unread-count', plugins_url( 'unread-count.js', __FILE__ ), array( 'jquery' ), $this->version, true );
-	}
+	require_once dirname ( __FILE__ ) . '/classes/class.BlobImap.php';
+	require_once dirname ( __FILE__ ) . '/classes/class.EmailWidget.php';
 
-	public function wp_ajax_unread_gmail_count() {
-		exit( $this->get_unread_count() );
-	}
-
-	/**
-	 * Fetch Gmail atom feed and return unread count
-	 * 
-	 * @return int $unread Unread email count
-	 */
-	public function get_unread_count() {
-		if ( empty( $this->username ) || empty( $this->password ) ) {
-			return false;
-		}
-
-		$transient_key = 'gmail-unread-count';
-		$transient_timeout = 60 * 15; // 15 minutes
-
-		// Check cache
-		if ( false !== get_transient( $transient_key ) ) {
-			return get_transient( $transient_key );
-		}
-
-		$response = wp_remote_get( $this->atom_feed_url );
-
-		if ( is_wp_error( $response ) ) {
-			return false;
-		}
-
-		$xml = simplexml_load_string( $response['body'] );
-
-		$unread = (int) $xml->fullcount;
-
-		// Set cache
-		set_transient( $transient_key, $unread, $transient_timeout );
-
-		return $unread;
-	}
-
-	/**
-	 * Add username and password to Gmail request.
-	 */
-	public function http_request_args( $request, $url ) {
-		if ( $this->atom_feed_url == $url ) {
-			$request['headers'] = wp_parse_args( array(
-				'Authorization' => 'Basic ' . base64_encode( $this->username . ':' . $this->password )
-			), $request );
-		}
-
-		return $request;
-	}
 }

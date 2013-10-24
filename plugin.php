@@ -1,7 +1,7 @@
 <?php
 /*
   Plugin Name: Inbox Status 
-  Plugin URI: https://github.com/brainstormmedia/inbox-status/settings
+  Plugin URI: https://github.com/brainstormmedia/inbox-status
   Description: Easy widget and functions to show email counts in your theme (like unread email).
   Version: 0.1
   Author: Brainstorm Media
@@ -31,7 +31,7 @@ function storm_inbox_status_init() {
     }
 	}
 
-	require_once dirname ( __FILE__ ) . '/classes/class.BlobImap.php';
-	require_once dirname ( __FILE__ ) . '/classes/class.EmailWidget.php';
+	require_once dirname ( __FILE__ ) . '/classes/class-imap.php';
+	require_once dirname ( __FILE__ ) . '/classes/class-email-widget.php';
 
 }

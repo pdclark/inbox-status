@@ -1,5 +1,7 @@
 <?php
 
+require_once( 'class.BlobImap.php' );
+
 class BlobEmailWidget extends WP_Widget {
 
 	public function __construct() {

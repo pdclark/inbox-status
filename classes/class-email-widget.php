@@ -5,29 +5,18 @@
  */
 class IS_Email_Widget extends WP_Widget {
 
+	var $defaults = array(
+		'title' => '',
+	);
+
 	public function __construct() {
 		parent::WP_Widget( false, $name = __( 'Email Count', 'inbox-status' ) );
 	}
 
 	public function widget( $args, $instance ) {
-		$defaults = array(
-			'server' => '',
-			'user' => '',
-			'title' => '',
-			'password' => '',
-		);
-		
-		$instance = wp_parse_args( $instance, $defaults );
+		$instance = wp_parse_args( $instance, $this->defaults );
 
 		$inbox = IS_Inbox_Status::get_instance();
-
-		$imap = new Net_IMAP(
-			$inbox->get_option( 'imap_server' ),
-			993,  // Port
-			true // TLS
-		);
-
-		$imap->login( $inbox->get_option( 'username' ), $inbox->get_option( 'password' ) );
 
 		echo $args['before_widget'];
 		
@@ -35,22 +24,15 @@ class IS_Email_Widget extends WP_Widget {
 		echo $instance['title'];
 		echo $args['after_title'];
 
-		echo '<p>' . $imap->getNumberOfUnSeenMessages() . ' ' . __( 'unread emails', 'inbox-status' ) . '<br/>';
-		echo $imap->getNumberOfMessages() . ' ' . __( 'total emails', 'inbox-status' ) . '</p>';
+		echo '<p>' . $inbox->get_unread_count() . ' ' . __( 'unread emails', 'inbox-status' ) . '<br/>';
+		echo $inbox->get_total_count() . ' ' . __( 'total emails', 'inbox-status' ) . '</p>';
 
 		echo $args['after_widget'];
 			
 	}
 
 	public function form( $instance ) {
-		$defaults = array(
-			'server' => '',
-			'user' => '',
-			'title' => '',
-			'password' => '',
-		);
-
-		$instance = wp_parse_args( $instance, $defaults );
+		$instance = wp_parse_args( $instance, $this->defaults );
 
 		?>
 			<p>
@@ -65,4 +47,4 @@ class IS_Email_Widget extends WP_Widget {
 		<?php 
 	}
 
-} // end class
+}

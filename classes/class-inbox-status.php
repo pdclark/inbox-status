@@ -18,23 +18,16 @@ class IS_Inbox_Status {
 	var $options;
 
 	/**
-	 * @var string Gmail username
-	 */
-	private $username;
-
-	/**
-	 * @var string Gmail password
-	 */
-	private $password;
-
-	/**
-	 * @var string URL to Gmail atom feed
-	 */
-	private $atom_feed_url = 'https://mail.google.com/mail/feed/atom';
-
-	/**
 	 * @var IS_Admin Admin class
 	 */
+	var $admin;
+
+	/**
+	 * Don't access directly. Use $this->get_imap() instead.
+	 * 
+	 * @var Net_IMAP Pear IMAP library. Does not require PHP IMAP extension.
+	 */
+	protected $imap;
 	
 	/**
 	 * Don't use this. Use ::get_instance() instead.
@@ -60,28 +53,20 @@ class IS_Inbox_Status {
 	 */
 	protected function init() {
 
-		$this->username = apply_filters( 'unread_gmail_username', '' );
-		$this->password = apply_filters( 'unread_gmail_password', '' );
-
 		// Todo: Move option_key from IS_Admin to this class and remove duplicate string
 		$this->options = get_option( 'inbox-status' );
 
 		add_action( 'wp_ajax_unread-gmail-count', array( $this, 'wp_ajax_unread_gmail_count' ) );
 		add_action( 'wp_ajax_nopriv_unread-gmail-count', array( $this, 'wp_ajax_unread_gmail_count' ) );
 		
-		add_filter( 'http_request_args', array( $this, 'http_request_args' ), 10, 2 );
-
 		add_action( 'wp_print_scripts', array( $this, 'wp_print_scripts' ) );
 
 		// Widgets
 		add_action( 'widgets_init', array( $this, 'widgets_init' ) );
 
 		// Admin
-		if ( is_admin() ) {
-			require_once dirname ( __FILE__ ) . '/class-admin.php';
-			$this->admin = new IS_Admin();
-		}
-		
+		if ( is_admin() ) { $this->get_admin(); }
+
 	}
 
 	public function get_option( $key ) {
@@ -105,16 +90,25 @@ class IS_Inbox_Status {
 	}
 
 	/**
-	 * Fetch Gmail atom feed and return unread count
-	 * 
-	 * @return int $unread Unread email count
+	 * @return bool Whether username and password have been filled out in settings.
 	 */
-	public function get_unread_count() {
-		if ( empty( $this->username ) || empty( $this->password ) ) {
+	public function have_credentials() {
+		// Todo: Add notice linking to settings; requesting setup.
+
+		if ( false === $this->get_option('username') || false === $this->get_option('password') ) {
 			return false;
 		}
 
-		$transient_key = 'gmail-unread-count';
+		return true;
+	}
+
+	/**
+	 * @return int $unread Number of unread emails.
+	 */
+	public function get_unread_count() {
+		if ( !$this->have_credentials() ) { return false; }
+
+		$transient_key = 'inbox-status-unread-count';
 		$transient_timeout = 60 * 15; // 15 minutes
 
 		// Check cache
@@ -122,15 +116,8 @@ class IS_Inbox_Status {
 			return get_transient( $transient_key );
 		}
 
-		$response = wp_remote_get( $this->atom_feed_url );
-
-		if ( is_wp_error( $response ) ) {
-			return false;
-		}
-
-		$xml = simplexml_load_string( $response['body'] );
-
-		$unread = (int) $xml->fullcount;
+		$imap = $this->get_imap();
+		$unread = $imap->getNumberOfUnSeenMessages();
 
 		// Set cache
 		set_transient( $transient_key, $unread, $transient_timeout );
@@ -139,15 +126,61 @@ class IS_Inbox_Status {
 	}
 
 	/**
-	 * Add username and password to Gmail request.
+	 * @return int $total Total number of emails, read or unread.
 	 */
-	public function http_request_args( $request, $url ) {
-		if ( $this->atom_feed_url == $url ) {
-			$request['headers'] = wp_parse_args( array(
-				'Authorization' => 'Basic ' . base64_encode( $this->username . ':' . $this->password )
-			), $request );
+	public function get_total_count() {
+		if ( !$this->have_credentials() ) { return false; }
+
+		$transient_key = 'inbox-status-total-count';
+		$transient_timeout = 60 * 15; // 15 minutes
+
+		// Check cache
+		if ( false !== get_transient( $transient_key ) ) {
+			return get_transient( $transient_key );
 		}
 
-		return $request;
+		$imap = $this->get_imap();
+		$total = $imap->getNumberOfMessages();
+
+		// Set cache
+		set_transient( $transient_key, $total, $transient_timeout );
+
+		return $total;
 	}
+
+	/**
+	 * @return Net_IMAP Conneted and authenticated IMAP object.
+	 */
+	public function get_imap() {
+		if ( !$this->have_credentials() ) { return false; }
+
+		if ( is_a( $this->imap, 'Net_IMAP' ) ) {
+			return $this->imap;
+		}
+
+		$this->imap = new Net_IMAP(
+			$this->get_option( 'imap_server' ),
+			993,  // Port
+			true // TLS
+		);
+
+		$this->imap->login( $this->get_option( 'username' ), $this->get_option( 'password' ) );
+
+		return $this->imap;
+	}
+
+	/**
+	 * @return IS_Admin Object for admin interface.
+	 */
+	public function get_admin() {
+		if ( is_a( $this->admin, 'IS_Admin') ) {
+			return $this->admin;
+		}
+
+		require_once dirname ( __FILE__ ) . '/class-admin.php';
+		$this->admin = new IS_Admin();
+
+		return $this->admin;
+	}
+
 }

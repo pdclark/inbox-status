@@ -15,12 +15,12 @@ class IS_Inbox_Status {
 	/**
 	 * @var array Options from wp_options key inbox-status
 	 */
-	var $options;
+	protected $options;
 
 	/**
 	 * @var IS_Admin Admin class
 	 */
-	var $admin;
+	protected $admin;
 
 	/**
 	 * Don't access directly. Use $this->get_imap() instead.
@@ -46,6 +46,24 @@ class IS_Inbox_Status {
 			self::$instance->init();
 		}
 		return self::$instance;
+	}
+
+	/**
+	 * If a variable is accessed from outside the class,
+	 * return a value from method get_$var()
+	 * 
+	 * For example, $inbox->unread_count returns $inbox->get_unread_count()
+	 * 
+	 * @return pretty-much-anything
+	 */
+	public function __get( $var ) {
+		$method = 'get_' . $var;
+
+		if ( method_exists( $this, $method ) ) {
+			return $this->$method();
+		}else {
+			return $this->$var;
+		}
 	}
 	
 	/**

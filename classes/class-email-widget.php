@@ -24,8 +24,8 @@ class IS_Email_Widget extends WP_Widget {
 		echo $instance['title'];
 		echo $args['after_title'];
 
-		echo '<p>' . $inbox->get_unread_count() . ' ' . __( 'unread emails', 'inbox-status' ) . '<br/>';
-		echo $inbox->get_total_count() . ' ' . __( 'total emails', 'inbox-status' ) . '</p>';
+		echo '<p>' . $inbox->unread_count . ' ' . __( 'unread emails', 'inbox-status' ) . '<br/>';
+		echo $inbox->total_count . ' ' . __( 'total emails', 'inbox-status' ) . '</p>';
 
 		echo $args['after_widget'];
 			

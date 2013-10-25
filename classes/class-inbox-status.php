@@ -87,6 +87,10 @@ class IS_Inbox_Status {
 		// Widgets
 		add_action( 'widgets_init', array( $this, 'widgets_init' ) );
 
+		// Custom Actions (for use in themes)
+		add_action( 'inbox_status_unread_count', array( $this, 'unread_count' ) );
+		add_action( 'inbox_status_total_count', array( $this, 'total_count' ) );
+
 		// Shortcodes
 		$this->shortcodes = new IS_Shortcodes();
 
@@ -152,6 +156,10 @@ class IS_Inbox_Status {
 		return true;
 	}
 
+	public function unread_count() {
+		echo $this->get_unread_count();
+	}
+
 	/**
 	 * @return int $unread Number of unread emails.
 	 */
@@ -177,6 +185,10 @@ class IS_Inbox_Status {
 		set_transient( $transient_key, $unread, $transient_timeout );
 
 		return $unread;
+	}
+
+	public function total_count() {
+		echo $this->get_total_count();
 	}
 
 	/**

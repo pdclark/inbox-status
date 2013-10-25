@@ -38,15 +38,6 @@ class IS_Inbox_Status {
 			wp_die( $message );
 		}       
 	}
-	
-	public static function get_instance() {
-		if ( !is_a( self::$instance, __CLASS__ ) ) {
-			self::$instance = true;
-			self::$instance = new self();
-			self::$instance->init();
-		}
-		return self::$instance;
-	}
 
 	/**
 	 * If a variable is accessed from outside the class,
@@ -64,6 +55,15 @@ class IS_Inbox_Status {
 		}else {
 			return $this->$var;
 		}
+	}
+	
+	public static function get_instance() {
+		if ( !is_a( self::$instance, __CLASS__ ) ) {
+			self::$instance = true;
+			self::$instance = new self();
+			self::$instance->init();
+		}
+		return self::$instance;
 	}
 	
 	/**
@@ -124,7 +124,7 @@ class IS_Inbox_Status {
 	}
 
 	public function wp_print_scripts() {
-		wp_enqueue_script( 'gmail-unread-count', plugins_url( 'unread-count.js', __FILE__ ), array( 'jquery' ), INBOX_STATUS_VERSION, true );
+		// wp_enqueue_script( 'gmail-unread-count', plugins_url( 'unread-count.js', __FILE__ ), array( 'jquery' ), INBOX_STATUS_VERSION, true );
 	}
 
 	public function wp_ajax_unread_gmail_count() {

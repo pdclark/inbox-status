@@ -6,7 +6,7 @@
 class IS_Email_Widget extends WP_Widget {
 
 	public function __construct() {
-		parent::WP_Widget( false, $name = __( 'Email Count', 'blob_email_count' ) );
+		parent::WP_Widget( false, $name = __( 'Email Count', 'inbox-status' ) );
 	}
 
 	public function widget( $args, $instance ) {
@@ -21,12 +21,13 @@ class IS_Email_Widget extends WP_Widget {
 
 		$inbox = IS_Inbox_Status::get_instance();
 
-		$e = new IS_IMAP();
-		$e->create_connection(
+		$imap = new Net_IMAP(
 			$inbox->get_option( 'imap_server' ),
-			$inbox->get_option( 'username' ),
-			$inbox->get_option( 'password' )
+			993,  // Port
+			true // TLS
 		);
+
+		$imap->login( $inbox->get_option( 'username' ), $inbox->get_option( 'password' ) );
 
 		echo $args['before_widget'];
 		
@@ -34,10 +35,8 @@ class IS_Email_Widget extends WP_Widget {
 		echo $instance['title'];
 		echo $args['after_title'];
 
-		echo "<p>";
-		echo $e->count_unread() . '/' . $e->count_all();
-		echo "<br/>Unread/All";
-		echo "</p>";
+		echo '<p>' . $imap->getNumberOfUnSeenMessages() . ' ' . __( 'unread emails', 'inbox-status' ) . '<br/>';
+		echo $imap->getNumberOfMessages() . ' ' . __( 'total emails', 'inbox-status' ) . '</p>';
 
 		echo $args['after_widget'];
 			

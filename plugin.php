@@ -12,6 +12,8 @@ define( 'INBOX_STATUS_FILE', __FILE__ );
 define( 'INBOX_STATUS_DIR', dirname( __FILE__ ) );
 define( 'INBOX_STATUS_VERSION', '0.1' );
 
+set_include_path( INBOX_STATUS_DIR . '/classes/PEAR' . PATH_SEPARATOR . get_include_path() );
+
 add_action( 'plugins_loaded', 'storm_inbox_status_init' );
 
 function storm_inbox_status_init() {
@@ -32,7 +34,9 @@ function storm_inbox_status_init() {
 		}
 	}
 
-	require_once INBOX_STATUS_DIR . '/classes/class-imap.php';
+	if ( !class_exists( 'Net_IMAP' ) ) {
+		require_once INBOX_STATUS_DIR . '/classes/PEAR/Net/IMAP.php';
+	}
 	require_once INBOX_STATUS_DIR . '/classes/class-email-widget.php';
 	require_once INBOX_STATUS_DIR . '/classes/class-inbox-status.php';
 

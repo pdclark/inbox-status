@@ -28,7 +28,7 @@ function storm_inbox_status_init() {
 		if ( $okay_to_exit ) {
 			require_once ABSPATH . '/wp-admin/includes/plugin.php';
 			deactivate_plugins( __FILE__ );
-			wp_die( sprintf( __( 'Inbox Status requires PHP 5.2 or higher, as does WordPress 3.2 and higher. The plugin has now disabled itself. For information on upgrading, %ssee this article%s.', 'menu-social-icons'), '<a href="http://codex.wordpress.org/Switching_to_PHP5" target="_blank">', '</a>') );
+			wp_die( sprintf( __( 'Inbox Status requires PHP 5.2 or higher, as does WordPress 3.2 and higher. The plugin has now disabled itself. For information on upgrading, %ssee this article%s.', 'inbox-status'), '<a href="http://codex.wordpress.org/Switching_to_PHP5" target="_blank">', '</a>') );
 		} else {
 			return;
 		}

@@ -5,8 +5,8 @@
 class IS_Admin {
 
 	var $options_page_name = 'Inbox Status';
-	var $options_page_slug = 'inbox-status';	
-	var $option_key = 'inbox-status';	
+	var $options_page_slug = 'inbox-status';  
+	var $option_key = 'inbox-status'; 
 
 	/**
 	 * @var array All sections
@@ -100,9 +100,9 @@ class IS_Admin {
 	 * 
 	 * @return null Outputs views/licenses.php and exits.
 	 */
-  function admin_options() {
-    $this->get_view( 'admin-options' );
-  }
+	function admin_options() {
+		$this->get_view( 'admin-options' );
+	}
 
 	/**
 	* Register settings

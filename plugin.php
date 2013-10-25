@@ -1,11 +1,11 @@
 <?php
 /*
-  Plugin Name: Inbox Status 
-  Plugin URI: https://github.com/brainstormmedia/inbox-status
-  Description: Easy widget and functions to show email counts in your theme (like unread email).
-  Version: 0.1
-  Author: Brainstorm Media
-  Author URI: http://brainstormmedia.com
+	Plugin Name: Inbox Status 
+	Plugin URI: https://github.com/brainstormmedia/inbox-status
+	Description: Easy widget and functions to show email counts in your theme (like unread email).
+	Version: 0.1
+	Author: Brainstorm Media
+	Author URI: http://brainstormmedia.com
 */
 
 define( 'INBOX_STATUS_FILE', __FILE__ );
@@ -23,19 +23,19 @@ function storm_inbox_status_init() {
 	$okay_to_exit = is_admin() && ( !defined('DOING_AJAX') || !DOING_AJAX );
 	
 	if ( $php_is_outdated ) {
-    if ( $okay_to_exit ) {
-      require_once ABSPATH . '/wp-admin/includes/plugin.php';
-      deactivate_plugins( __FILE__ );
-      wp_die( sprintf( __( 'Inbox Status requires PHP 5.2 or higher, as does WordPress 3.2 and higher. The plugin has now disabled itself. For information on upgrading, %ssee this article%s.', 'menu-social-icons'), '<a href="http://codex.wordpress.org/Switching_to_PHP5" target="_blank">', '</a>') );
-    } else {
-      return;
-    }
+		if ( $okay_to_exit ) {
+			require_once ABSPATH . '/wp-admin/includes/plugin.php';
+			deactivate_plugins( __FILE__ );
+			wp_die( sprintf( __( 'Inbox Status requires PHP 5.2 or higher, as does WordPress 3.2 and higher. The plugin has now disabled itself. For information on upgrading, %ssee this article%s.', 'menu-social-icons'), '<a href="http://codex.wordpress.org/Switching_to_PHP5" target="_blank">', '</a>') );
+		} else {
+			return;
+		}
 	}
 
 	require_once INBOX_STATUS_DIR . '/classes/class-imap.php';
-  require_once INBOX_STATUS_DIR . '/classes/class-email-widget.php';
+	require_once INBOX_STATUS_DIR . '/classes/class-email-widget.php';
 	require_once INBOX_STATUS_DIR . '/classes/class-inbox-status.php';
 
-  IS_Inbox_Status::get_instance();
+	IS_Inbox_Status::get_instance();
 
 }

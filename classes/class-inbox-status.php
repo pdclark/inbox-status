@@ -13,6 +13,11 @@ class IS_Inbox_Status {
 	private static $instance = false;
 
 	/**
+	 * @var array Options from wp_options key inbox-status
+	 */
+	var $options;
+
+	/**
 	 * @var string Gmail username
 	 */
 	private $username;
@@ -26,6 +31,10 @@ class IS_Inbox_Status {
 	 * @var string URL to Gmail atom feed
 	 */
 	private $atom_feed_url = 'https://mail.google.com/mail/feed/atom';
+
+	/**
+	 * @var IS_Admin Admin class
+	 */
 	
 	/**
 	 * Don't use this. Use ::get_instance() instead.
@@ -54,6 +63,9 @@ class IS_Inbox_Status {
 		$this->username = apply_filters( 'unread_gmail_username', '' );
 		$this->password = apply_filters( 'unread_gmail_password', '' );
 
+		// Todo: Move option_key from IS_Admin to this class and remove duplicate string
+		$this->options = get_option( 'inbox-status' );
+
 		add_action( 'wp_ajax_unread-gmail-count', array( $this, 'wp_ajax_unread_gmail_count' ) );
 		add_action( 'wp_ajax_nopriv_unread-gmail-count', array( $this, 'wp_ajax_unread_gmail_count' ) );
 		
@@ -63,7 +75,21 @@ class IS_Inbox_Status {
 
 		// Widgets
 		add_action( 'widgets_init', array( $this, 'widgets_init' ) );
+
+		// Admin
+		if ( is_admin() ) {
+			require_once dirname ( __FILE__ ) . '/class-admin.php';
+			$this->admin = new IS_Admin();
+		}
 		
+	}
+
+	public function get_option( $key ) {
+		if ( isset( $this->options[ $key ] ) ) {
+			return $this->options[ $key ];
+		}else {
+			return false;
+		}
 	}
 
 	public function widgets_init() {

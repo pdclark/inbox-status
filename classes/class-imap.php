@@ -42,7 +42,9 @@ class IS_IMAP {
 	    $this->mUser = $user;
 	if( !is_null( $pass ) )
 	    $this->mPass = $pass;
-	$this->mConnection = imap_open( '{' . $this->mServer . ':993/imap/ssl' . $this->mExtraConConf . '}INBOX', $this->mUser, $this->mPass, OP_READONLY );
+
+		$this->mConnection = imap_open( '{' . $this->mServer . ':993/imap/ssl' . $this->mExtraConConf . '}INBOX', $this->mUser, $this->mPass, OP_READONLY );
+
     }
 
     public function count_unread() {

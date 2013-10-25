@@ -8,7 +8,8 @@
   Author URI: http://brainstormmedia.com
 */
 
-define( 'INBOX_STATUS_PLUGIN_FILE', __FILE__ );
+define( 'INBOX_STATUS_FILE', __FILE__ );
+define( 'INBOX_STATUS_DIR', dirname( __FILE__ ) );
 define( 'INBOX_STATUS_VERSION', '0.1' );
 
 add_action( 'plugins_loaded', 'storm_inbox_status_init' );
@@ -31,9 +32,9 @@ function storm_inbox_status_init() {
     }
 	}
 
-	require_once dirname ( __FILE__ ) . '/classes/class-imap.php';
-  require_once dirname ( __FILE__ ) . '/classes/class-email-widget.php';
-	require_once dirname ( __FILE__ ) . '/classes/class-inbox-status.php';
+	require_once INBOX_STATUS_DIR . '/classes/class-imap.php';
+  require_once INBOX_STATUS_DIR . '/classes/class-email-widget.php';
+	require_once INBOX_STATUS_DIR . '/classes/class-inbox-status.php';
 
   IS_Inbox_Status::get_instance();
 

@@ -18,9 +18,14 @@ class IS_Email_Widget extends WP_Widget {
 	    );
 	    $instance = wp_parse_args( $instance, $defaults );
 
-	    $e = new IS_IMAP();
-	    $e->create_connection( $instance['server'], $instance['user'], $instance['pass'] );
+	    $inbox = IS_Inbox_Status::get_instance();
 
+	    $e = new IS_IMAP();
+	    $e->create_connection(
+	    	$inbox->get_option( 'imap_server' ),
+	    	$inbox->get_option( 'username' ),
+	    	$inbox->get_option( 'password' )
+	    );
 
 	    echo $args['before_widget'];
 	    
@@ -55,30 +60,6 @@ class IS_Email_Widget extends WP_Widget {
 		    name="<?php echo $this->get_field_name( 'title' ); ?>"
 		    type="text"
 		    value="<?php echo esc_attr( $instance['title'] ); ?>"
-		/>
-	    </p>
-	    <p>
-		<label for="<?php echo $this->get_field_id( 'server' ); ?>"><?php _e( 'Server:' );?></label>
-		<input class="widefat"
-			name="<?php echo $this->get_field_name( 'server' ); ?>"
-			type="text"
-			value="<?php echo esc_attr( $instance['server'] ); ?>"
-		/>
-	    </p>
-	    <p>
-		<label for="<?php echo $this->get_field_id( 'user' ); ?>"><?php _e( 'User:' );?></label>
-		<input class="widefat"
-			name="<?php echo $this->get_field_name( 'user' ); ?>"
-			type="text"
-			value="<?php echo esc_attr( $instance['user'] ); ?>"
-		/>
-	    </p>
-	    <p>
-		<label for="<?php echo $this->get_field_id( 'password' ); ?>"><?php _e( 'Password:' );?></label>
-		<input class="widefat"
-			name="<?php echo $this->get_field_name( 'password' ); ?>"
-			type="text"
-			value="<?php echo esc_attr( $instance['password'] ); ?>"
 		/>
 	    </p>
 	    <?php 

@@ -38,6 +38,7 @@ function storm_inbox_status_init() {
 		require_once INBOX_STATUS_DIR . '/classes/PEAR/Net/IMAP.php';
 	}
 	require_once INBOX_STATUS_DIR . '/classes/class-email-widget.php';
+	require_once INBOX_STATUS_DIR . '/classes/class-shortcodes.php';
 	require_once INBOX_STATUS_DIR . '/classes/class-inbox-status.php';
 
 	IS_Inbox_Status::get_instance();

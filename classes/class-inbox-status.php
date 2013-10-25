@@ -18,9 +18,14 @@ class IS_Inbox_Status {
 	protected $options;
 
 	/**
-	 * @var IS_Admin Admin class
+	 * @var IS_Admin Admin object
 	 */
 	protected $admin;
+
+	/**
+	 * @var IS_Shortcodes Shortcodes object
+	 */
+	protected $shortcodes;
 
 	/**
 	 * Don't access directly. Use $this->get_imap() instead.
@@ -81,6 +86,9 @@ class IS_Inbox_Status {
 
 		// Widgets
 		add_action( 'widgets_init', array( $this, 'widgets_init' ) );
+
+		// Shortcodes
+		$this->shortcodes = new IS_Shortcodes();
 
 		// Admin
 		if ( is_admin() ) { $this->get_admin(); }
@@ -149,6 +157,10 @@ class IS_Inbox_Status {
 	 */
 	public function get_unread_count() {
 		if ( !$this->have_credentials() ) { return false; }
+
+		// Todo: Use an option instead of a transient,
+		//       then update on wp-cron or with wp-ajax
+		//       instead of during frontend load
 
 		$transient_key = 'inbox-status-unread-count';
 		$transient_timeout = 60 * 15; // 15 minutes

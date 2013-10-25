@@ -95,6 +95,30 @@ class IS_Inbox_Status {
 		}
 	}
 
+	/**
+	 * Load HTML template from templates directory.
+	 * Contents of $args are turned into variables for use in the template.
+	 * 
+	 * For example, $args = array( 'foo' => 'bar' );
+	 *   becomes variable $foo with value 'bar'
+	 */
+	public static function get_template( $file, $args = array() ) {
+		extract( $args );
+
+		$locations = array(
+			'admin_file' => INBOX_STATUS_DIR . "/templates/admin/$file.php",
+			'theme_file' => get_stylesheet_directory() . "/inbox-status-theme/$file.php",
+			'plugin_file' => INBOX_STATUS_DIR . "/templates/inbox-status-theme/$file.php",
+		);
+
+		foreach ( $locations as $file ) {
+			if ( file_exists( $file ) ) {
+				include $file;
+				return;
+			}
+		}
+	}
+
 	public function widgets_init() {
 		register_widget( 'IS_Email_Widget' );
 	}

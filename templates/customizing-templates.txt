@@ -1,0 +1,4 @@
+You can override the display of Inbox Status templates by copying the "inbox-status-theme"
+folder into your WordPress theme's directory. 
+
+Files you edit there will override the plugin defaults.

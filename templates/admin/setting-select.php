@@ -1,7 +1,7 @@
-<select class="select <?php echo $class ?>" name="<?php echo $this->option_key . "[$id]" ?>">
+<select class="select <?php echo $class ?>" name="<?php echo $option_name ?>" ?>">
 	
 	<?php foreach( $choices as $value => $label ) : ?>
-		<option value="<?php esc_attr_e( $value ) ?>" <?php selected( $options[$id], $value, false ) ?> >
+		<option value="<?php esc_attr_e( $value ) ?>" <?php selected( $option_value, $value, false ) ?> >
 			<?php echo $label ?>
 		</option>
 	<?php endforeach; ?>

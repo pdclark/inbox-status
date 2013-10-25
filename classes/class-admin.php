@@ -29,16 +29,6 @@ class IS_Admin {
 	}
 
 	/**
-	 * Load HTML template from views directory.
-	 * Template files have access to $this
-	 */
-	public function get_view( $file, $args = array() ) {
-		extract( $args );
-
-		require INBOX_STATUS_DIR . "/views/$file.php";
-	}
-
-	/**
 	 * Populate $this->sections with all section arguements
 	 * 
 	 * @return void
@@ -101,7 +91,12 @@ class IS_Admin {
 	 * @return null Outputs views/licenses.php and exits.
 	 */
 	function admin_options() {
-		$this->get_view( 'admin-options' );
+		$args = array(
+			'options_page_name' => $this->options_page_name,
+			'options_page_slug' => $this->options_page_slug,
+		);
+
+		IS_Inbox_Status::get_template( 'admin-options', $args );
 	}
 
 	/**
@@ -178,9 +173,13 @@ class IS_Admin {
 			$options[$id] = $default;
 		}
 
-		$args['options'] = $options;
-		
-		$this->get_view( 'setting-' . $args['type'], $args );
+		$id = $args['id'];
+		$args['option_value'] = $options[ $id ];
+		$args['option_name'] = $this->option_key . '[' . $id . ']';
+
+		$template = 'setting-' . $args['type'];
+
+		IS_Inbox_Status::get_template( $template, $args );
 		
 	}
 

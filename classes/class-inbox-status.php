@@ -18,6 +18,11 @@ class IS_Inbox_Status {
 	const OPTION_KEY = IS_PLUGIN_SLUG;
 
 	/**
+	 * @var int How often should inbox data be updated, in seconds.
+	 */
+	protected $update_interval;
+
+	/**
 	 * @var array Options from wp_options
 	 */
 	protected $options;
@@ -82,11 +87,14 @@ class IS_Inbox_Status {
 	 */
 	protected function init() {
 
-		// Todo: Move option_key from IS_Admin to this class and remove duplicate string
 		$this->options = get_option( self::OPTION_KEY );
 
-		add_action( 'wp_ajax_unread-gmail-count', array( $this, 'wp_ajax_unread_gmail_count' ) );
-		add_action( 'wp_ajax_nopriv_unread-gmail-count', array( $this, 'wp_ajax_unread_gmail_count' ) );
+		// Filter allows inbox stats to be updated more or less frequently.
+		// Default is 15 minutes
+		$this->update_interval = apply_filters( 'inbox_status_update_interval', 60*15 );
+
+		add_action( 'wp_ajax_inbox-status-update-inbox', array( $this, 'wp_ajax_update_inbox' ) );
+		add_action( 'wp_ajax_nopriv_inbox-status-update-inbox', array( $this, 'wp_ajax_update_inbox' ) );
 		
 		add_action( 'wp_print_scripts', array( $this, 'wp_print_scripts' ) );
 
@@ -142,24 +150,62 @@ class IS_Inbox_Status {
 	}
 
 	public function wp_print_scripts() {
-		// wp_enqueue_script( 'gmail-unread-count', plugins_url( 'unread-count.js', __FILE__ ), array( 'jquery' ), IS_PLUGIN_VERSION, true );
+		wp_enqueue_script( 'is-update-inbox', plugins_url( 'js/update-inbox.js', IS_PLUGIN_FILE ), array( 'jquery' ), IS_PLUGIN_VERSION, true );
+
+		// Pass PHP variables to update script
+		wp_localize_script( 'is-update-inbox', 'is_inbox_status', array(
+			'last_updated' => $this->get_option( 'last-updated' ),
+			'current_time' => time(), // Use PHP time to avoid timezone mismatch
+			'update_interval' => $this->update_interval,
+			'ajax_url' => admin_url( 'admin-ajax.php?action=inbox-status-update-inbox' ),
+		) );
 	}
 
-	public function wp_ajax_unread_gmail_count() {
-		exit( $this->get_unread_count() );
+	/**
+	 * Respond to AJAX request to update the inbox stats.
+	 * Using AJAX avoids slowing down or crashing the site during imap connections.
+	 */
+	public function wp_ajax_update_inbox() {
+		
+		if ( $this->update_inbox() ) {
+			// Todo: Display full information from notices array.
+			_e( 'Inbox data updated.', IS_PLUGIN_SLUG );
+		}else {
+			_e( 'Update failed.', IS_PLUGIN_SLUG );
+		}
+
+		exit;
 	}
 
 	/**
 	 * @return bool Whether username and password have been filled out in settings.
 	 */
 	public function have_credentials() {
-		// Todo: Add notice linking to settings; requesting setup.
+		// Todo: Add notice linking to settings requesting setup.
 
 		if ( false === $this->get_option('username') || false === $this->get_option('password') ) {
 			return false;
 		}
 
 		return true;
+	}
+
+	/**
+	 * Update cache in options with latest inbox data.
+	 * 
+	 * @return bool Whether update succeeded or not.
+	 */
+	public function update_inbox() {
+		if ( !$this->have_credentials() ) { return false; }
+
+		$imap = $this->get_imap();
+
+		$this->options['unread-count'] = $imap->getNumberOfUnSeenMessages();
+		$this->options['total-count']  = $imap->getNumberOfMessages();
+		$this->options['last-updated'] = time();
+
+		// Update cache.
+		return update_option( self::OPTION_KEY, $this->options );
 	}
 
 	public function unread_count() {
@@ -170,27 +216,15 @@ class IS_Inbox_Status {
 	 * @return int $unread Number of unread emails.
 	 */
 	public function get_unread_count() {
-		if ( !$this->have_credentials() ) { return false; }
-
-		// Todo: Use an option instead of a transient,
-		//       then update on wp-cron or with wp-ajax
-		//       instead of during frontend load
-
-		$transient_key = self::OPTION_KEY . '-unread-count';
-		$transient_timeout = 60 * 15; // 15 minutes
-
 		// Check cache
-		if ( false !== get_transient( $transient_key ) ) {
-			return get_transient( $transient_key );
+		if ( false !== $this->get_option( 'unread-count' ) ) {
+			return $this->get_option( 'unread-count' );
 		}
 
-		$imap = $this->get_imap();
-		$unread = $imap->getNumberOfUnSeenMessages();
+		// Nothing cached. Probably a first run, so query and cache.
+		$this->update_inbox();
 
-		// Set cache
-		set_transient( $transient_key, $unread, $transient_timeout );
-
-		return $unread;
+		return $this->get_option( 'unread-count' );
 	}
 
 	public function total_count() {
@@ -201,23 +235,15 @@ class IS_Inbox_Status {
 	 * @return int $total Total number of emails, read or unread.
 	 */
 	public function get_total_count() {
-		if ( !$this->have_credentials() ) { return false; }
-
-		$transient_key = self::OPTION_KEY . '-total-count';
-		$transient_timeout = 60 * 15; // 15 minutes
-
 		// Check cache
-		if ( false !== get_transient( $transient_key ) ) {
-			return get_transient( $transient_key );
+		if ( false !== $this->get_option( 'total-count' ) ) {
+			return $this->get_option( 'total-count' );
 		}
 
-		$imap = $this->get_imap();
-		$total = $imap->getNumberOfMessages();
+		// Nothing cached. Probably a first run, so query and cache.
+		$this->update_inbox();
 
-		// Set cache
-		set_transient( $transient_key, $total, $transient_timeout );
-
-		return $total;
+		return $this->get_option( 'total-count' );
 	}
 
 	/**

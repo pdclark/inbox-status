@@ -16,6 +16,11 @@
 define( 'IS_PLUGIN_VERSION', '0.1' );
 
 /**
+ * @var string Absolute path to this file.
+ */
+define( 'IS_PLUGIN_FILE', __FILE__ );
+
+/**
  * @var string Absolute path to the root plugin directory
  */
 define( 'IS_PLUGIN_DIR', dirname( __FILE__ ) );

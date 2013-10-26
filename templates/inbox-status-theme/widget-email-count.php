@@ -1,3 +1,5 @@
+<?php echo $before_widget ?>
+
 <?php echo $before_title ?>
 <?php echo $title ?>
 <?php echo $after_title ?>
@@ -12,3 +14,5 @@
 		<?php _e( 'total emails', IS_PLUGIN_SLUG ) ?>
 	</li>
 </ul>
+
+<?php echo $after_widget ?>

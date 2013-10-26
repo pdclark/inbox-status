@@ -26,11 +26,7 @@ class IS_Email_Widget extends WP_Widget {
 		$template_args = array_merge( $args, $instance );
 		$template_args['inbox'] = $inbox;
 
-		echo $args['before_widget'];
-
 		IS_Inbox_Status::get_template( 'widget-email-count', $template_args );
-		
-		echo $args['after_widget'];
 			
 	}
 

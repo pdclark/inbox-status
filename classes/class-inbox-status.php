@@ -8,7 +8,7 @@
 class IS_Inbox_Status {
 
 	/**
-	 * @var Storm_Inbox_Status Instance of the class.
+	 * @var IS_Inbox_Status Instance of this class.
 	 */
 	private static $instance = false;
 
@@ -33,7 +33,8 @@ class IS_Inbox_Status {
 	protected $shortcodes;
 
 	/**
-	 * Don't access directly. Use $this->get_imap() instead.
+	 * Don't access directly within this class.
+	 * Use $this->get_imap() instead.
 	 * 
 	 * @var Net_IMAP Pear IMAP library. Does not require PHP IMAP extension.
 	 */
@@ -123,9 +124,9 @@ class IS_Inbox_Status {
 		extract( $args );
 
 		$locations = array(
-			'admin_file' => INBOX_STATUS_DIR . "/templates/admin/$file.php",
+			'admin_file' => IS_PLUGIN_DIR . "/templates/admin/$file.php",
 			'theme_file' => get_stylesheet_directory() . "/inbox-status-theme/$file.php",
-			'plugin_file' => INBOX_STATUS_DIR . "/templates/inbox-status-theme/$file.php",
+			'plugin_file' => IS_PLUGIN_DIR . "/templates/inbox-status-theme/$file.php",
 		);
 
 		foreach ( $locations as $file ) {
@@ -141,7 +142,7 @@ class IS_Inbox_Status {
 	}
 
 	public function wp_print_scripts() {
-		// wp_enqueue_script( 'gmail-unread-count', plugins_url( 'unread-count.js', __FILE__ ), array( 'jquery' ), INBOX_STATUS_VERSION, true );
+		// wp_enqueue_script( 'gmail-unread-count', plugins_url( 'unread-count.js', __FILE__ ), array( 'jquery' ), IS_PLUGIN_VERSION, true );
 	}
 
 	public function wp_ajax_unread_gmail_count() {

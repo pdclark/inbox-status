@@ -4,9 +4,6 @@
  */
 class IS_Admin {
 
-	var $options_page_name = 'Inbox Status';
-	var $options_page_slug = 'inbox-status';  
-
 	/**
 	 * @var array All sections
 	 */
@@ -75,11 +72,11 @@ class IS_Admin {
 	public function admin_menu() {
 		
 		add_options_page(
-			$this->options_page_name,
-			$this->options_page_name,
-			'manage_options',
-			$this->options_page_slug,
-			array( $this, 'admin_options' )
+			IS_PLUGIN_NAME,                 // Page title
+			IS_PLUGIN_NAME,                 // Menu title
+			'manage_options',               // Capability
+			IS_PLUGIN_SLUG,                 // Menu slug
+			array( $this, 'admin_options' ) // Page display callback
 		);
 
 	}
@@ -90,12 +87,7 @@ class IS_Admin {
 	 * @return null Outputs views/licenses.php and exits.
 	 */
 	function admin_options() {
-		$args = array(
-			'options_page_name' => $this->options_page_name,
-			'options_page_slug' => $this->options_page_slug,
-		);
-
-		IS_Inbox_Status::get_template( 'admin-options', $args );
+		IS_Inbox_Status::get_template( 'admin-options' );
 	}
 
 	/**
@@ -103,14 +95,14 @@ class IS_Admin {
 	*/
 	public function register_settings() {
 		
-		register_setting( $this->options_page_slug, IS_Inbox_Status::OPTION_KEY, array ( $this, 'validate_settings' ) );
+		register_setting( IS_PLUGIN_SLUG, IS_Inbox_Status::OPTION_KEY, array ( $this, 'validate_settings' ) );
 		
 		foreach ( $this->sections as $slug => $title ) {
 			add_settings_section(
 				$slug,
 				$title,
 				null, // Section display callback
-				$this->options_page_slug
+				IS_PLUGIN_SLUG
 			);
 		}
 		

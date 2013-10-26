@@ -6,7 +6,6 @@ class IS_Admin {
 
 	var $options_page_name = 'Inbox Status';
 	var $options_page_slug = 'inbox-status';  
-	var $option_key = 'inbox-status'; 
 
 	/**
 	 * @var array All sections
@@ -35,7 +34,7 @@ class IS_Admin {
 	 */
 	public function sections_init() {
 		$this->sections = array(
-			'login' => __( 'Login Info', 'inbox-status' ),
+			'login' => __( 'Login Info', IS_PLUGIN_SLUG ),
 		);
 	}
 
@@ -48,24 +47,24 @@ class IS_Admin {
 		$this->settings = array(
 
 			'imap_server' => array(
-				'title'       => __( 'IMAP Server', 'inbox-status' ),
-				'description' => __( 'For example, <code>imap.gmail.com</code>', 'inbox-status' ),
+				'title'       => __( 'IMAP Server', IS_PLUGIN_SLUG ),
+				'description' => __( 'For example, <code>imap.gmail.com</code>', IS_PLUGIN_SLUG ),
 				'default'     => '',
 				'type'        => 'input',
 				'section'     => 'login',
 			),
 
 			'username' => array(
-				'title'       => __( 'Username' ),
-				'description' => __( 'For example, <code>awesomesauce</code> or <code>awesomesauce@gmail.com</code>', 'inbox-status' ),
+				'title'       => __( 'Username', IS_PLUGIN_SLUG ),
+				'description' => __( 'For example, <code>awesomesauce</code> or <code>awesomesauce@gmail.com</code>', IS_PLUGIN_SLUG ),
 				'default'     => '',
 				'type'        => 'input',
 				'section'     => 'login',
 			),
 
 			'password' => array(
-				'title'       => __( 'Password' ),
-				'description' => __( 'Password for you e-mail account.<br/> If using Gmail 2-step verification, use an <a href="https://support.google.com/accounts/answer/185833" target="_blank">application specific password</a>.', 'inbox-status' ),
+				'title'       => __( 'Password', IS_PLUGIN_SLUG ),
+				'description' => __( 'Password for you e-mail account.<br/> If using Gmail 2-step verification, use an <a href="https://support.google.com/accounts/answer/185833" target="_blank">application specific password</a>.', IS_PLUGIN_SLUG ),
 				'default'     => '',
 				'type'        => 'password',
 				'section'     => 'login',
@@ -104,14 +103,14 @@ class IS_Admin {
 	*/
 	public function register_settings() {
 		
-		register_setting( $this->option_key, $this->option_key, array ( $this, 'validate_settings' ) );
+		register_setting( $this->options_page_slug, IS_Inbox_Status::OPTION_KEY, array ( $this, 'validate_settings' ) );
 		
 		foreach ( $this->sections as $slug => $title ) {
 			add_settings_section(
 				$slug,
 				$title,
 				null, // Section display callback
-				$this->option_key
+				$this->options_page_slug
 			);
 		}
 		
@@ -131,8 +130,8 @@ class IS_Admin {
 		
 		$defaults = array(
 			'id'          => 'default_field',
-			'title'       => __( 'Default Field', 'inbox-status' ),
-			'description' => __( 'Default description.', 'inbox-status' ),
+			'title'       => __( 'Default Field', IS_PLUGIN_SLUG ),
+			'description' => __( 'Default description.', IS_PLUGIN_SLUG ),
 			'default'     => '',
 			'type'        => 'text',
 			'section'     => 'general',
@@ -156,7 +155,7 @@ class IS_Admin {
 			$id,
 			$title,
 			array( $this, 'display_setting' ),
-			$this->option_key,
+			IS_Inbox_Status::OPTION_KEY,
 			$section,
 			$field_args
 		);
@@ -167,7 +166,7 @@ class IS_Admin {
 	 */
 	public function display_setting( $args = array() ) {
 		
-		$options = get_option( $this->option_key );
+		$options = get_option( IS_Inbox_Status::OPTION_KEY );
 		
 		if ( !isset( $options[$id] ) ) {
 			$options[$id] = $default;
@@ -175,7 +174,7 @@ class IS_Admin {
 
 		$id = $args['id'];
 		$args['option_value'] = $options[ $id ];
-		$args['option_name'] = $this->option_key . '[' . $id . ']';
+		$args['option_name'] = IS_Inbox_Status::OPTION_KEY . '[' . $id . ']';
 
 		$template = 'setting-' . $args['type'];
 

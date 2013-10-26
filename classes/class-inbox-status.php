@@ -13,7 +13,12 @@ class IS_Inbox_Status {
 	private static $instance = false;
 
 	/**
-	 * @var array Options from wp_options key inbox-status
+	 * @var string Key for plugin options in wp_options table
+	 */
+	const OPTION_KEY = IS_PLUGIN_SLUG;
+
+	/**
+	 * @var array Options from wp_options
 	 */
 	protected $options;
 
@@ -77,7 +82,7 @@ class IS_Inbox_Status {
 	protected function init() {
 
 		// Todo: Move option_key from IS_Admin to this class and remove duplicate string
-		$this->options = get_option( 'inbox-status' );
+		$this->options = get_option( self::OPTION_KEY );
 
 		add_action( 'wp_ajax_unread-gmail-count', array( $this, 'wp_ajax_unread_gmail_count' ) );
 		add_action( 'wp_ajax_nopriv_unread-gmail-count', array( $this, 'wp_ajax_unread_gmail_count' ) );
@@ -170,7 +175,7 @@ class IS_Inbox_Status {
 		//       then update on wp-cron or with wp-ajax
 		//       instead of during frontend load
 
-		$transient_key = 'inbox-status-unread-count';
+		$transient_key = self::OPTION_KEY . '-unread-count';
 		$transient_timeout = 60 * 15; // 15 minutes
 
 		// Check cache
@@ -197,7 +202,7 @@ class IS_Inbox_Status {
 	public function get_total_count() {
 		if ( !$this->have_credentials() ) { return false; }
 
-		$transient_key = 'inbox-status-total-count';
+		$transient_key = self::OPTION_KEY . '-total-count';
 		$transient_timeout = 60 * 15; // 15 minutes
 
 		// Check cache

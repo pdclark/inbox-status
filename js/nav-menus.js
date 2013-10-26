@@ -16,7 +16,7 @@
 			// Remove the ajax spinner
 			$('#' + plugin.slug + '-div .spinner').hide();
 			// Set custom link form back to defaults
-			$('#' + plugin.slug + '-name').val('').blur();
+			populate_template();
 			$('#' + plugin.slug + '-url').val( plugin.url_default );
 		});
 	};
@@ -35,13 +35,30 @@
 		}, processMethod, callback);
 	};
 
-	$('#submit-' + plugin.slug + '-div').click( function(){
-		api.addInboxStatusLink( api.addMenuItemToBottom );
-	});
+	/**
+	 * Fill name field with value of template selector
+	 */
+	var populate_template = function() {
+		var value = $('#' + plugin.slug + '-template').val();
 
-	// Testing only
-	setTimeout( function(){
-		$('#add-' + plugin.slug + ' h3').click();
-	}, 1000 );
+		$('#' + plugin.slug + '-name').val( value ).blur();
+	}
+
+	var init = function(){
+		$('#submit-' + plugin.slug + '-div').click( function(){
+			api.addInboxStatusLink( api.addMenuItemToBottom );
+		});
+
+		$('#' + plugin.slug + '-template').change( populate_template ).change();
+
+		// Testing only
+		if ( 'http://pdclark.com/wp-admin/nav-menus.php' == window.location ) {
+			setTimeout( function(){
+				$('#add-' + plugin.slug + ' h3').click();
+			}, 1000 );
+		}
+	};
+
+	init();
 
 })( jQuery, wpNavMenu, InboxStatusAdmin );

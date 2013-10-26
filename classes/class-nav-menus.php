@@ -52,6 +52,8 @@ class IS_Nav_Menus {
 				$item->classes[] = 'is-prevent-hover';
 			}
 
+			$item = $this->maybe_add_email_icon( $item );
+
 		}
 
 		return $sorted_menu_items;
@@ -63,6 +65,23 @@ class IS_Nav_Menus {
 			return true;
 		}
 		return false;
+	}
+
+	public function maybe_add_email_icon( $item ) {
+
+		// Require filter to enable social icon integration
+		// Users would have to know how to edit the CSS
+		if ( apply_filters( 'inbox_status_add_social_icon', false ) ) {
+			if ( !class_exists( 'MSI_Frontend' ) ) { return $item; }
+
+			$msi = MSI_Frontend::get_instance();
+
+			$item->title = $msi->get_icon( $msi->networks['mailto:'] ) . $item->title;
+			$item->classes[] = $msi->li_class;
+		}
+
+		return $item;
+		
 	}
 
 	/**

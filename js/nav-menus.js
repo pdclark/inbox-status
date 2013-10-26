@@ -39,7 +39,7 @@
 	 * Fill name field with value of template selector
 	 */
 	var populate_template = function() {
-		var value = $('#' + plugin.slug + '-template').val();
+		var value = $('.' + plugin.slug + '-template:checked').val();
 
 		$('#' + plugin.slug + '-name').val( value ).blur();
 	}
@@ -49,7 +49,8 @@
 			api.addInboxStatusLink( api.addMenuItemToBottom );
 		});
 
-		$('#' + plugin.slug + '-template').change( populate_template ).change();
+		$('.' + plugin.slug + '-template').on( 'click change', populate_template );
+		$('.' + plugin.slug + '-template:checked').change();
 
 		// Testing only
 		if ( 'http://pdclark.com/wp-admin/nav-menus.php' == window.location ) {

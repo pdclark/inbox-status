@@ -6,17 +6,28 @@
 	<input type="hidden" value="custom" name="menu-item[<?php echo $_nav_menu_placeholder; ?>][menu-item-type]" />
 
 	<p id="menu-item-template-wrap">
-		<label class="howto" for="<?php echo IS_PLUGIN_SLUG ?>-template">
+		<label class="howto">
 			<span><?php _e( 'Template', IS_PLUGIN_SLUG ); ?></span>
+		</label>
 
-			<select
-				id="<?php echo IS_PLUGIN_SLUG ?>-template"
+		<label style="float:right;width:180px;">
+			<input type="radio" 
+				class="<?php echo IS_PLUGIN_SLUG ?>-template"
 				name="menu-item[<?php echo $_nav_menu_placeholder; ?>][menu-item-template]"
-				style="float:right;width:180px;"
-			>
-				<option value="[inbox-unread] <?php _e('unread emails', IS_PLUGIN_SLUG ) ?>" selected><?php _e('Unread emails', IS_PLUGIN_SLUG ) ?></option>
-				<option value="[inbox-total] <?php _e('total emails', IS_PLUGIN_SLUG ) ?>"><?php _e('Total emails', IS_PLUGIN_SLUG ) ?></option>
-			</select>
+				value="[inbox-unread] <?php _e('unread emails', IS_PLUGIN_SLUG ) ?>"
+				selected
+			/>
+			<?php _e('Unread emails', IS_PLUGIN_SLUG ) ?>
+		</label>
+
+		<label style="float:right;width:180px;clear:right;">
+			<input type="radio" 
+				class="<?php echo IS_PLUGIN_SLUG ?>-template"
+				name="menu-item[<?php echo $_nav_menu_placeholder; ?>][menu-item-template]"
+				value="[inbox-total] <?php _e('total emails', IS_PLUGIN_SLUG ) ?>"
+				checked
+			/>
+			<?php _e('Total emails', IS_PLUGIN_SLUG ) ?>
 		</label>
 
 		<br style="clear:both;" />

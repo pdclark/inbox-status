@@ -9,21 +9,19 @@ class IS_Shortcodes {
 	public function __construct() {
 		$this->inbox = IS_Inbox_Status::get_instance();
 
-		add_shortcode( 'unread-emails',  array( $this, 'unread_emails' ) );
-		add_shortcode( 'unread-e-mails', array( $this, 'unread_emails' ) );
-		add_shortcode( 'unread_emails',  array( $this, 'unread_emails' ) );
+		add_shortcode( 'inbox-unread',  array( $this, 'inbox_unread' ) );
+		add_shortcode( 'inbox_unread',  array( $this, 'inbox_unread' ) );
 
-		add_shortcode( 'total-emails',  array( $this, 'total_emails' ) );
-		add_shortcode( 'total-e-mails', array( $this, 'total_emails' ) );
-		add_shortcode( 'total_emails',  array( $this, 'total_emails' ) );
+		add_shortcode( 'inbox-total',  array( $this, 'inbox_total' ) );
+		add_shortcode( 'inbox_total',  array( $this, 'inbox_total' ) );
 	}
 
-	public function unread_emails() {
-		return $this->inbox->get_unread_count();
+	public function inbox_unread() {
+		return '<span class="is-unread-count">' . $this->inbox->get_unread_count() . '</span>';
 	}
 
-	public function total_emails() {
-		return $this->inbox->get_total_count();
+	public function inbox_total() {
+		return '<span class="is-total-count">' .$this->inbox->get_total_count() . '</span>';
 	}
 	
 }

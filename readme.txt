@@ -17,8 +17,8 @@ Retrieve information from your email inbox over IMAP, then display information, 
 * **Inbox Status — Email Count** displays total email and total unread count.
 
 **Shortcodes**
-`[unread-emails]`
-`[total-emails]`
+`[inbox-unread]`
+`[inbox-total]`
 
 **Theme Actions**
 `

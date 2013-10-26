@@ -61,7 +61,7 @@ class IS_Nav_Menus {
 	}
 
 	public function is_targeted_menu_item( $item ) {
-		if ( in_array( 'inbox-status', $item->classes ) ) {
+		if ( in_array( IS_PLUGIN_SLUG, $item->classes ) ) {
 			return true;
 		}
 		return false;
@@ -81,7 +81,7 @@ class IS_Nav_Menus {
 		}
 
 		return $item;
-		
+
 	}
 
 	/**

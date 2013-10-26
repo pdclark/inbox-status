@@ -14,8 +14,8 @@
 				name="menu-item[<?php echo $_nav_menu_placeholder; ?>][menu-item-template]"
 				style="float:right;width:180px;"
 			>
-				<option value="[unread-emails] unread emails" selected>Unread emails</option>
-				<option value="[total-emails] total emails">Total emails</option>
+				<option value="[inbox-unread] <?php _e('unread emails', IS_PLUGIN_SLUG ) ?>" selected><?php _e('Unread emails', IS_PLUGIN_SLUG ) ?></option>
+				<option value="[inbox-total] <?php _e('total emails', IS_PLUGIN_SLUG ) ?>"><?php _e('Total emails', IS_PLUGIN_SLUG ) ?></option>
 			</select>
 		</label>
 

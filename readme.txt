@@ -4,7 +4,7 @@ Plugin URI: https://github.com/brainstormmedia/inbox-status
 Author URI: http://brainstormmedia.com
 Tags: email, mail, gmail, imap, inbox, unread
 Requires at least: 3.4
-Tested up to: 3.6.1
+Tested up to: 3.7
 Stable tag: 0.1
 
 Display stats from your email inbox.

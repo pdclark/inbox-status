@@ -13,6 +13,22 @@ Display stats from your email inbox.
 
 Retrieve information from your email inbox over IMAP, then display information, like your unread email count.
 
+**Widget**
+* **Inbox Status — Email Count** displays total email and total unread count.
+
+**Shortcodes**
+`[unread-emails]`
+`[total-emails]`
+
+**Theme Actions**
+`
+// Display unread email count in your theme
+do_action( 'inbox_status_unread_count' );
+
+// Display total email count in your theme
+do_action( 'inbox_status_total_count' );
+`
+
 == Installation ==
 
 1. Search for "Inbox Status" under `WordPress Admin > Plugins > Add New`

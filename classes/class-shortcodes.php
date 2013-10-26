@@ -19,11 +19,11 @@ class IS_Shortcodes {
 	}
 
 	public function unread_emails() {
-		return $this->inbox->get_unread_count();
+		return '<span class="is-unread-count">' . $this->inbox->get_unread_count() . '</span>';
 	}
 
 	public function total_emails() {
-		return $this->inbox->get_total_count();
+		return '<span class="is-total-count">' .$this->inbox->get_total_count() . '</span>';
 	}
 	
 }

@@ -38,6 +38,11 @@ class IS_Inbox_Status {
 	protected $shortcodes;
 
 	/**
+	 * @var IS_Nav_Menu Navigation Menus object
+	 */
+	protected $nav_menus;
+
+	/**
 	 * Don't access directly within this class.
 	 * Use $this->get_imap() instead.
 	 * 
@@ -107,6 +112,9 @@ class IS_Inbox_Status {
 
 		// Shortcodes
 		$this->shortcodes = new IS_Shortcodes();
+
+		// Navigation menu items
+		$this->nav_menus = new IS_Nav_Menus();
 
 		// Admin
 		if ( is_admin() ) { $this->get_admin(); }

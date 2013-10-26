@@ -21,7 +21,7 @@ class IS_Admin {
 		
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
-		
+
 	}
 
 	/**

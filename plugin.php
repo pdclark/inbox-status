@@ -76,6 +76,7 @@ function storm_inbox_status_init() {
 	}
 	require_once IS_PLUGIN_DIR . '/classes/class-email-widget.php';
 	require_once IS_PLUGIN_DIR . '/classes/class-shortcodes.php';
+	require_once IS_PLUGIN_DIR . '/classes/class-nav-menus.php';
 	require_once IS_PLUGIN_DIR . '/classes/class-inbox-status.php';
 
 	IS_Inbox_Status::get_instance();

@@ -3,7 +3,7 @@
 	Plugin Name: Inbox Status 
 	Plugin URI: https://github.com/brainstormmedia/inbox-status
 	Description: Easy widget and functions to show email counts in your theme (like unread email).
-	Version: 0.1
+	Version: 1.0
 	Author: Brainstorm Media
 	Author URI: http://brainstormmedia.com
 */
@@ -13,7 +13,7 @@
  * 
  * @var string Version number of the plugin.
  */
-define( 'IS_PLUGIN_VERSION', '0.1' );
+define( 'IS_PLUGIN_VERSION', '1.0' );
 
 /**
  * @var string Absolute path to this file.

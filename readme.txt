@@ -14,13 +14,16 @@ Display stats from your email inbox.
 Retrieve information from your email inbox over IMAP, then display information, like your unread email count.
 
 **Widget**
+
 * **Inbox Status — Email Count** displays total email and total unread count.
 
 **Shortcodes**
+
 `[inbox-unread]`
 `[inbox-total]`
 
 **Theme Actions**
+
 `
 // Display unread email count in your theme
 do_action( 'inbox_status_unread_count' );

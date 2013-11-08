@@ -220,17 +220,7 @@ class IS_Inbox_Status {
 		$this->options['total-count']  = $imap->getNumberOfMessages();
 		$this->options['last-updated'] = time();
 
-		$message = sprintf(
-			__('Connection successful! Unread emails: %d. Total emails: %d. %sAdd a widget%s or %sadd a menu item%s.', 'inbox-status' ),
-			$this->options['unread-count'],
-			$this->options['total-count'],
-			'<a href="' . admin_url( 'widgets.php' ) . '">',
-			'</a>',
-			'<a href="' . admin_url( 'nav-menus.php' ) . '">',
-			'</a>'
-		);
-
-		$this->notice( $message );
+		$this->notice( __('Connection successful!', 'inbox-status' ) );
 
 		// Update cache.
 		return update_option( self::OPTION_KEY, $this->options );

@@ -32,11 +32,11 @@
 		</thead>
 		<tbody>
 			
-		<?php foreach ( $shortcodes as $key => $shortcode ) : ?>
+		<?php foreach ( $shortcodes as $key => $example ) : ?>
 
 			<tr>
-				<td><?php echo $shortcode['example'] ?></td>
-				<td><?php echo do_shortcode( $shortcode['example'] ); ?></td>
+				<td><?php echo $example ?></td>
+				<td><?php echo do_shortcode( $example ); ?></td>
 			</tr>
 
 		<?php endforeach; ?>
@@ -57,7 +57,7 @@
 		</thead>
 		<tbody>
 		
-		<?php foreach ( $shortcodes as $type => $meta ) : ?>
+		<?php foreach ( $shortcodes as $type => $example ) : ?>
 			
 			<tr>
 				<td><code>&lt;?php do_action( 'inbox_status_count', '<?php echo $type ?>' ); ?&gt;</code></td>

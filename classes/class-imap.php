@@ -43,7 +43,6 @@ class IS_IMAP extends Net_IMAP {
         $ret['PARSED'] = $ret['PARSED'][0]['EXT'];
     }
 
-
 		if ($ret instanceOf PEAR_Error) {
         return $ret;
     }

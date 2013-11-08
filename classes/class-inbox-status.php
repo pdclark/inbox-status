@@ -227,10 +227,17 @@ class IS_Inbox_Status {
 			return false;
 		}
 
-		$this->options['inbox-unread'] = $imap->getNumberOfUnSeenMessages();
-		$this->options['inbox-total']  = $imap->getNumberOfMessages();
-		$this->options['gmail-important-unread'] = $imap->gmailSearchCount( 'is:important is:unread' );
-		$this->options['gmail-starred-unread'] = $imap->gmailSearchCount( 'is:starred is:unread' );
+		$this->options['inbox-unread']     = $imap->getNumberOfUnSeenMessages();
+		$this->options['inbox-total']      = $imap->getNumberOfMessages();
+
+		$this->options['gmail-important']  = $imap->gmailSearchCount( 'is:important is:unread' );
+		$this->options['gmail-starred']    = $imap->gmailSearchCount( 'is:starred is:unread' );
+		$this->options['gmail-primary']    = $imap->gmailSearchCount( 'category:personal is:unread' );
+		$this->options['gmail-social']     = $imap->gmailSearchCount( 'category:social is:unread' );
+		$this->options['gmail-promotions'] = $imap->gmailSearchCount( 'category:promotions is:unread' );
+		$this->options['gmail-updates']    = $imap->gmailSearchCount( 'category:updates is:unread' );
+		$this->options['gmail-forums']     = $imap->gmailSearchCount( 'category:forums is:unread' );
+
 		$this->options['last-updated'] = time();
 
 		$this->notice( __('Connection successful!', 'inbox-status' ) );

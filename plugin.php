@@ -23,28 +23,15 @@ define( 'IS_PLUGIN_VERSION', '1.0' );
 define( 'IS_PLUGIN_FILE', __FILE__ );
 
 /**
- * @var string Absolute path to the root plugin directory
- */
-define( 'IS_PLUGIN_DIR', dirname( __FILE__ ) );
-
-/**
- * Used for localization text-domain, which must match wp.org slug.
- * Used for wp-admin settings page slug.
- * 
- * @var string Slug of the plugin on wordpress.org.
- */
-define( 'IS_PLUGIN_SLUG', 'inbox-status' );
-
-/**
  * Used for error messages.
  * Used for settings page title.
  * 
  * @var string Nice name of the plugin.
  */
-define( 'IS_PLUGIN_NAME', __( 'Inbox Status', IS_PLUGIN_SLUG ) );
+define( 'IS_PLUGIN_NAME', __( 'Inbox Status', 'inbox-status' ) );
 
 // Add PEAR directory to include path
-set_include_path( IS_PLUGIN_DIR . '/classes/PEAR' . PATH_SEPARATOR . get_include_path() );
+set_include_path( dirname( IS_PLUGIN_FILE ) . '/classes/PEAR' . PATH_SEPARATOR . get_include_path() );
 
 /**
  * Verify that we're running WordPress 3.2 (which enforces PHP 5.2.4).
@@ -53,12 +40,12 @@ if ( version_compare( $GLOBALS['wp_version'], '3.2', '>=' ) ) :
 
 	// Load plugin classes and instantiate the plugin.
 	if ( !class_exists( 'Net_IMAP' ) ) {
-		require_once IS_PLUGIN_DIR . '/classes/PEAR/Net/IMAP.php';
+		require_once dirname( IS_PLUGIN_FILE ) . '/classes/PEAR/Net/IMAP.php';
 	}
-	require_once IS_PLUGIN_DIR . '/classes/class-email-widget.php';
-	require_once IS_PLUGIN_DIR . '/classes/class-shortcodes.php';
-	require_once IS_PLUGIN_DIR . '/classes/class-nav-menus.php';
-	require_once IS_PLUGIN_DIR . '/classes/class-inbox-status.php';
+	require_once dirname( IS_PLUGIN_FILE ) . '/classes/class-email-widget.php';
+	require_once dirname( IS_PLUGIN_FILE ) . '/classes/class-shortcodes.php';
+	require_once dirname( IS_PLUGIN_FILE ) . '/classes/class-nav-menus.php';
+	require_once dirname( IS_PLUGIN_FILE ) . '/classes/class-inbox-status.php';
 
 	add_action( 'plugins_loaded', 'IS_Inbox_Status::get_instance' );
 

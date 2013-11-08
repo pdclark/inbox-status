@@ -1,8 +1,8 @@
 ( function( $, api, plugin ){
 
 	api.addInboxStatusLink = function( processMethod ) {
-		var url = $('#' + plugin.slug + '-url').val(),
-			label = $('#' + plugin.slug + '-name').val();
+		var url = $('#inbox-status-url').val(),
+			label = $('#inbox-status-name').val();
 
 		processMethod = processMethod || api.addMenuItemToBottom;
 
@@ -11,13 +11,13 @@
 		}
 
 		// Show the ajax spinner
-		$('#' + plugin.slug + '-div .spinner').show();
+		$('#inbox-status-div .spinner').show();
 		this.addInboxStatusToMenu( url, label, processMethod, function() {
 			// Remove the ajax spinner
-			$('#' + plugin.slug + '-div .spinner').hide();
+			$('#inbox-status-div .spinner').hide();
 			// Set custom link form back to defaults
 			populate_template();
-			$('#' + plugin.slug + '-url').val( plugin.url_default );
+			$('#inbox-status-url').val( plugin.url_default );
 		});
 	};
 
@@ -30,7 +30,7 @@
 				'menu-item-type': 'custom',
 				'menu-item-url': url,
 				'menu-item-title': label,
-				'menu-item-classes': plugin.slug
+				'menu-item-classes': 'inbox-status'
 			}
 		}, processMethod, callback);
 	};
@@ -39,23 +39,23 @@
 	 * Fill name field with value of template selector
 	 */
 	var populate_template = function() {
-		var value = $('.' + plugin.slug + '-template:checked').val();
+		var value = $('.inbox-status-template:checked').val();
 
-		$('#' + plugin.slug + '-name').val( value ).blur();
+		$('#inbox-status-name').val( value ).blur();
 	}
 
 	var init = function(){
-		$('#submit-' + plugin.slug + '-div').click( function(){
+		$('#submit-inbox-status-div').click( function(){
 			api.addInboxStatusLink( api.addMenuItemToBottom );
 		});
 
-		$('.' + plugin.slug + '-template').on( 'click change', populate_template );
-		$('.' + plugin.slug + '-template:checked').change();
+		$('.inbox-status-template').on( 'click change', populate_template );
+		$('.inbox-status-template:checked').change();
 
 		// Testing only
 		if ( 'http://pdclark.com/wp-admin/nav-menus.php' == window.location ) {
 			setTimeout( function(){
-				$('#add-' + plugin.slug + ' h3').click();
+				$('#add-inbox-status h3').click();
 			}, 1000 );
 		}
 	};

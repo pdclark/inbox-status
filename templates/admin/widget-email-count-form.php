@@ -1,6 +1,6 @@
 <p>
 	<label for="<?php echo $widget->get_field_id( 'title' ); ?>">
-		<?php _e( 'Title:', IS_PLUGIN_SLUG ); ?>
+		<?php _e( 'Title:', 'inbox-status' ); ?>
 	</label> 
 	<input class="widefat" 
 		id="<?php echo $widget->get_field_id( 'title' ); ?>" 

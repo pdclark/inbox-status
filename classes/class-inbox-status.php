@@ -15,7 +15,7 @@ class IS_Inbox_Status {
 	/**
 	 * @var string Key for plugin options in wp_options table
 	 */
-	const OPTION_KEY = IS_PLUGIN_SLUG;
+	const OPTION_KEY = 'inbox-status';
 
 	/**
 	 * @var int How often should inbox data be updated, in seconds.
@@ -140,9 +140,9 @@ class IS_Inbox_Status {
 		extract( $args );
 
 		$locations = array(
-			'admin_file' => IS_PLUGIN_DIR . "/templates/admin/$file.php",
+			'admin_file' => dirname( IS_PLUGIN_FILE ) . "/templates/admin/$file.php",
 			'theme_file' => get_stylesheet_directory() . "/inbox-status-theme/$file.php",
-			'plugin_file' => IS_PLUGIN_DIR . "/templates/inbox-status-theme/$file.php",
+			'plugin_file' => dirname( IS_PLUGIN_FILE ) . "/templates/inbox-status-theme/$file.php",
 		);
 
 		foreach ( $locations as $file ) {

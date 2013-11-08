@@ -56,7 +56,7 @@ class IS_Admin {
 	 */
 	public function sections_init() {
 		$this->sections = array(
-			'login' => __( 'Login Info', IS_PLUGIN_SLUG ),
+			'login' => __( 'Login Info', 'inbox-status' ),
 		);
 	}
 
@@ -69,24 +69,24 @@ class IS_Admin {
 		$this->settings = array(
 
 			'imap_server' => array(
-				'title'       => __( 'IMAP Server', IS_PLUGIN_SLUG ),
-				'description' => __( 'For example, <code>imap.gmail.com</code>', IS_PLUGIN_SLUG ),
+				'title'       => __( 'IMAP Server', 'inbox-status' ),
+				'description' => __( 'For example, <code>imap.gmail.com</code>', 'inbox-status' ),
 				'default'     => '',
 				'type'        => 'input',
 				'section'     => 'login',
 			),
 
 			'username' => array(
-				'title'       => __( 'Username', IS_PLUGIN_SLUG ),
-				'description' => __( 'For example, <code>awesomesauce</code> or <code>awesomesauce@gmail.com</code>', IS_PLUGIN_SLUG ),
+				'title'       => __( 'Username', 'inbox-status' ),
+				'description' => __( 'For example, <code>awesomesauce</code> or <code>awesomesauce@gmail.com</code>', 'inbox-status' ),
 				'default'     => '',
 				'type'        => 'input',
 				'section'     => 'login',
 			),
 
 			'password' => array(
-				'title'       => __( 'Password', IS_PLUGIN_SLUG ),
-				'description' => __( 'Password for you e-mail account.<br/> If using Gmail 2-step verification, use an <a href="https://support.google.com/accounts/answer/185833" target="_blank">application specific password</a>.', IS_PLUGIN_SLUG ),
+				'title'       => __( 'Password', 'inbox-status' ),
+				'description' => __( 'Password for you e-mail account.<br/> If using Gmail 2-step verification, use an <a href="https://support.google.com/accounts/answer/185833" target="_blank">application specific password</a>.', 'inbox-status' ),
 				'default'     => '',
 				'type'        => 'password',
 				'section'     => 'login',
@@ -100,7 +100,7 @@ class IS_Admin {
 			IS_PLUGIN_NAME,                 // Page title
 			IS_PLUGIN_NAME,                 // Menu title
 			'manage_options',               // Capability
-			IS_PLUGIN_SLUG,                 // Menu slug
+			'inbox-status',                 // Menu slug
 			array( $this, 'admin_options' ) // Page display callback
 		);
 
@@ -132,14 +132,14 @@ class IS_Admin {
 	*/
 	public function register_settings() {
 		
-		register_setting( IS_PLUGIN_SLUG, IS_Inbox_Status::OPTION_KEY, array ( $this, 'validate_settings' ) );
+		register_setting( 'inbox-status', IS_Inbox_Status::OPTION_KEY, array ( $this, 'validate_settings' ) );
 		
 		foreach ( $this->sections as $slug => $title ) {
 			add_settings_section(
 				$slug,
 				$title,
 				null, // Section display callback
-				IS_PLUGIN_SLUG
+				'inbox-status'
 			);
 		}
 		
@@ -159,8 +159,8 @@ class IS_Admin {
 		
 		$defaults = array(
 			'id'          => 'default_field',
-			'title'       => __( 'Default Field', IS_PLUGIN_SLUG ),
-			'description' => __( 'Default description.', IS_PLUGIN_SLUG ),
+			'title'       => __( 'Default Field', 'inbox-status' ),
+			'description' => __( 'Default description.', 'inbox-status' ),
 			'default'     => '',
 			'type'        => 'text',
 			'section'     => 'general',

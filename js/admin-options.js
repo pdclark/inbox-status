@@ -4,7 +4,6 @@
 
 		"providerChange": function(){
 			var json = $.parseJSON( $(this).val() );
-			console.log( json );
 
 			$('#imap_server').val( json.imap_server );
 			$('#port').val( json.port );

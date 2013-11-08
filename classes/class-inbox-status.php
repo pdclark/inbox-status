@@ -123,6 +123,10 @@ class IS_Inbox_Status {
 
 	public function get_option( $key ) {
 		if ( isset( $this->options[ $key ] ) ) {
+
+			if ( 'tls' == $key )  { return (bool) $this->options[ $key ]; }
+			if ( 'port' == $key ) { return (int)  $this->options[ $key ]; }
+
 			return $this->options[ $key ];
 		}else {
 			return false;

@@ -4,17 +4,17 @@ class IS_Shortcodes {
 
 	public $shortcodes = array(
 		// Generic
-		'inbox-unread'     => '<code>[inbox-unread]</code> unread emails.',
-		'inbox-total'      => '<code>[inbox-total]</code> total emails.',
+		'inbox-unread'     => '<code>[inbox-unread]</code> unread emails',
+		'inbox-total'      => '<code>[inbox-total]</code> total emails',
 
 		// Gmail
-		'gmail-important'  => '<code>[gmail-important]</code> important emails.',
-		'gmail-starred'    => '<code>[gmail-starred]</code> starred emails.',
-		'gmail-primary'    => '<code>[gmail-primary]</code> primary emails.',
-		'gmail-social'     => '<code>[gmail-social]</code> social emails.',
-		'gmail-promotions' => '<code>[gmail-promotions]</code> promotional emails.',
-		'gmail-updates'    => '<code>[gmail-updates]</code> update emails.',
-		'gmail-forums'     => '<code>[gmail-forums]</code> forum emails.',
+		'gmail-important'  => '<code>[gmail-important]</code> important emails',
+		'gmail-starred'    => '<code>[gmail-starred]</code> starred emails',
+		'gmail-primary'    => '<code>[gmail-primary]</code> primary emails',
+		'gmail-social'     => '<code>[gmail-social]</code> social emails',
+		'gmail-promotions' => '<code>[gmail-promotions]</code> promotional emails',
+		'gmail-updates'    => '<code>[gmail-updates]</code> update emails',
+		'gmail-forums'     => '<code>[gmail-forums]</code> forum emails',
 	);
 
 	public function __construct() {

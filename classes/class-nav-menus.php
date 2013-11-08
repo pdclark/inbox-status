@@ -71,10 +71,13 @@ class IS_Nav_Menus {
 	 */
 	function meta_box( $object ) {
 		global $_nav_menu_placeholder, $nav_menu_selected_id;
+		$inbox = IS_Inbox_Status::get_instance();
 
 		$_nav_menu_placeholder = 0 > $_nav_menu_placeholder ? $_nav_menu_placeholder - 1 : -1;
 
-		$template_args = compact( '_nav_menu_placeholder', 'nav_menu_selected_id' );
+		$shortcodes = $inbox->shortcodes->shortcodes;
+
+		$template_args = compact( 'shortcodes', '_nav_menu_placeholder', 'nav_menu_selected_id' );
 		IS_Inbox_Status::get_template( 'nav-menu-meta-box', $template_args );
 
 	}

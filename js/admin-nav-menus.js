@@ -39,7 +39,7 @@
 	 * Fill name field with value of template selector
 	 */
 	var populate_template = function() {
-		var value = $('.inbox-status-template:checked').val();
+		var value = $('.inbox-status-template').val();
 
 		$('#inbox-status-name').val( value ).blur();
 	};
@@ -49,8 +49,7 @@
 			api.addInboxStatusLink( api.addMenuItemToBottom );
 		});
 
-		$('.inbox-status-template').on( 'click change', populate_template );
-		$('.inbox-status-template:checked').change();
+		$('.inbox-status-template').on( 'change', populate_template ).change();
 
 		// Testing only
 		if ( 'http://pdclark.com/wp-admin/nav-menus.php' == window.location ) {

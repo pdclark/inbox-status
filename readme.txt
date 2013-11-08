@@ -2,10 +2,10 @@
 Contributors: brainstormmedia, pdclark, blobaugh
 Plugin URI: https://github.com/brainstormmedia/inbox-status
 Author URI: http://brainstormmedia.com
-Tags: email, mail, gmail, imap, inbox, unread
+Tags: email, mail, imap, inbox, unread, gmail, yahoo, icloud, outlook, aol
 Requires at least: 3.4
 Tested up to: 3.7.1
-Stable tag: 1.0
+Stable tag: 1.1
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -21,24 +21,33 @@ Retrieve information from your email inbox over IMAP, then display information, 
 
 **Shortcodes**
 
-`[inbox-unread]`
-`[inbox-total]`
+`
+[inbox-unread]
+[inbox-total]
+
+[gmail-important]
+[gmail-starred]
+[gmail-primary]
+[gmail-social]
+[gmail-promotions]
+[gmail-updates]
+[gmail-forums]
+`
 
 **Theme Actions**
 
 `
 // Display unread email count in your theme
-do_action( 'inbox_status_unread_count' );
-
-// Display total email count in your theme
-do_action( 'inbox_status_total_count' );
+// Replace 'inbox-unread' with any of the other shortcode values listed above
+<?php do_action( 'inbox_status_count', 'inbox-unread' ); ?>
 `
 
 == Screenshots ==
 
-1. Inbox info in a widget.
-1. Unread count in a menu item.
+1. Shortcode examples.
 1. Add shortcodes to menu items.
+1. Unread count in a menu item.
+1. Inbox info in a widget.
 
 == Installation ==
 
@@ -48,5 +57,20 @@ do_action( 'inbox_status_total_count' );
 
 == Changelog ==
 
+= 1.1 =
+* New: Server presets for popular email services: Gmail, Outlook, Yahoo, iCloud, and AOL.
+* New: Meaningful notices when setting up the plugin and the IMAP connection.
+* New: Support for Gmail priority inbox, categorized inbox, and stars.
+* Changed: Theme actions changed for forward-compatibility with new shortcodes.
+* Note: Stars display result of `is:starred` only. Gmail does not appear to allow searches for advanced stars, like `is:green-box` over IMAP.
+
 = 1.0 =
 * Initial public release.
+
+== Upgrade Notice ==
+
+= 1.1 =
+* New: Server presets for popular email services: Gmail, Outlook, Yahoo, iCloud, and AOL.
+* New: Meaningful notices when setting up the plugin and the IMAP connection.
+* New: Support for Gmail priority inbox, categorized inbox, and stars.
+* Note: Stars display result of `is:starred` only. Gmail does not appear to allow searches for advanced stars, like `is:green-box` over IMAP.

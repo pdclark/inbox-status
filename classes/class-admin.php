@@ -198,7 +198,10 @@ class IS_Admin {
 	 * @return null Outputs views/licenses.php and exits.
 	 */
 	function admin_options() {
-		IS_Inbox_Status::get_template( 'admin-options' );
+		$inbox = IS_Inbox_Status::get_instance();
+		$shortcodes = $inbox->shortcodes->shortcodes;
+
+		IS_Inbox_Status::get_template( 'admin-options', array( 'shortcodes' => $shortcodes ) );
 	}
 
 	/**

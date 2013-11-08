@@ -210,9 +210,13 @@ class IS_Inbox_Status {
 			return false;
 		}
 
+		// Notices of failure set in get_imap >> pear_error_to_nice_error
 		$imap = $this->get_imap();
 
 		if ( false === $imap ) {
+			$this->options['unread-count'] = 0;
+			$this->options['total-count']  = 0;
+			$this->options['last-updated'] = time();
 			return false;
 		}
 
@@ -276,8 +280,8 @@ class IS_Inbox_Status {
 
 		$this->imap = new Net_IMAP(
 			$this->get_option( 'imap_server' ),
-			993,  // Port
-			true // TLS
+			$this->get_option( 'port' ),
+			$this->get_option( 'tls' )
 		);
 
 		$login = $this->imap->login( $this->get_option( 'username' ), $this->get_option( 'password' ) );
@@ -318,11 +322,16 @@ class IS_Inbox_Status {
 	 */
 	public function pear_error_to_nice_error( $login ) {
 		switch ( $login->message ) {
-			case 'NO, [AUTHENTICATIONFAILED] Invalid credentials (Failure)':
+			case 'NO, [AUTHENTICATIONFAILED] Invalid credentials (Failure)': // Gmail
+			case 'NO, Invalid username or password.': // Outlook
+			case 'NO, [AUTHORIZATIONFAILED] Incorrect username or password. (#MBR1212)': // Yahoo
+			case 'NO, [AUTHENTICATIONFAILED] (#AUTH012) Incorrect username or password.': // Yahoo
+			case 'NO, [AUTHENTICATIONFAILED] Authentication failed': // iCloud
+			case 'NO, Invalid login or password': // AOL
 				$this->notice( __( 'Authentication failed. Please check your username and password.', 'inbox-status' ) );
 				break;
 			case 'not connected! (CMD:LOGIN)':
-				$this->notice( __( 'Could not connect to IMAP server. Please verify the server address is correct. Please verify your IMAP server uses port 993 and TLS.', 'inbox-status' ) );
+				$this->notice( __( 'Could not connect to IMAP server. Please verify the server address and port are correct.', 'inbox-status' ) );
 				break;
 			default:
 				$this->notice( $login->message );

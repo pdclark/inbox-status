@@ -42,7 +42,7 @@
 		var value = $('.inbox-status-template:checked').val();
 
 		$('#inbox-status-name').val( value ).blur();
-	}
+	};
 
 	var init = function(){
 		$('#submit-inbox-status-div').click( function(){

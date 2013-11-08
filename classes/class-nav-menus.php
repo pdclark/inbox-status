@@ -24,9 +24,9 @@ class IS_Nav_Menus {
 
 		if ( 'nav-menus.php' == $page ) {
 
-			wp_enqueue_script( 'is-nav-menus', plugins_url( 'js/nav-menus.js', IS_PLUGIN_FILE ), array( 'jquery' ), IS_VERSION, true );
+			wp_enqueue_script( 'is-admin-nav-menus', plugins_url( 'js/admin-nav-menus.js', IS_PLUGIN_FILE ), array( 'jquery' ), IS_VERSION, true );
 
-			wp_localize_script( 'is-nav-menus', 'InboxStatusAdmin', array(
+			wp_localize_script( 'is-admin-nav-menus', 'InboxStatusAdmin', array(
 				'url_default' => __( 'Optional', 'inbox-status' ),
 			) );
 

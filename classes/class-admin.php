@@ -31,6 +31,8 @@ class IS_Admin {
 		add_action( 'admin_notices', array( $this, 'admin_notices' ) );
 		add_action( 'load-settings_page_inbox-status', array( $this, 'load_settings_page_inbox_status' ) );
 
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
+
 	}
 
 	public function request_setup() {
@@ -56,7 +58,8 @@ class IS_Admin {
 	 */
 	public function sections_init() {
 		$this->sections = array(
-			'login' => __( 'Login Info', 'inbox-status' ),
+			'server' => __( 'Email Provider', 'inbox-status' ),
+			'login' => __( 'Login Credentials', 'inbox-status' ),
 		);
 	}
 
@@ -68,12 +71,73 @@ class IS_Admin {
 	public function settings_init() {
 		$this->settings = array(
 
+			'provider' => array(
+				'title'       => __( 'Email provider', 'inbox-status' ),
+				'description' => sprintf( 
+						__( 'Select your email host to auto-fill server information. %sAdvanced settings%s.', 'inbox-status' ),
+						'<br/><a href="#" class="toggle-advanced">',
+						'</a>'
+				),
+				'default'     => '',
+				'type'        => 'select',
+				'section'     => 'server',
+				'choices'     => array(
+					'Gmail' => json_encode( array(
+						'imap_server' => 'imap.gmail.com',
+						'port' => 993, 'tls' => 1,
+					) ),
+					'Outlook' => json_encode( array(
+						'imap_server' => 'imap-mail.outlook.com',
+						'port' => 993, 'tls' => 1,
+					) ),
+					'Yahoo' => json_encode( array(
+						'imap_server' => 'imap.mail.yahoo.com',
+						'port' => 993, 'tls' => 1,
+					) ),
+					'iCloud' => json_encode( array(
+						'imap_server' => 'imap.mail.me.com',
+						'port' => 993, 'tls' => 1,
+					) ),
+					'AOL' => json_encode( array(
+						'imap_server' => 'imap.aol.com',
+						'port' => 993, 'tls' => 1,
+					) ),
+					'Other' => json_encode( array(
+						'imap_server' => '',
+						'port' => 993, 'tls' => 1,
+					) ),
+				),
+			),
+
 			'imap_server' => array(
 				'title'       => __( 'IMAP Server', 'inbox-status' ),
 				'description' => __( 'For example, <code>imap.gmail.com</code>', 'inbox-status' ),
 				'default'     => '',
 				'type'        => 'input',
-				'section'     => 'login',
+				'section'     => 'server',
+				'class'       => 'advanced',
+			),
+
+			'port' => array(
+				'title'       => __( 'Port', 'inbox-status' ),
+				'description' => __( 'This should almost always be <code>993</code>', 'inbox-status' ),
+				'default'     => '993',
+				'type'        => 'input',
+				'section'     => 'server',
+				'class'       => 'advanced',
+			),
+
+			'tls' => array(
+				'title'       => __( 'Require SSL/TLS', 'inbox-status' ),
+				'description' => __( 'Secures your connection. This should almost always be enabled.', 'inbox-status' ),
+				'default'     => true,
+				'type'        => 'radio',
+				'section'     => 'server',
+				'class'       => 'advanced',
+				'choices'     => array(
+					'Require SSL/TLS (secure)' => 1,
+					'Don\'t require (insecure)' => 0,
+				),
 			),
 
 			'username' => array(
@@ -86,12 +150,22 @@ class IS_Admin {
 
 			'password' => array(
 				'title'       => __( 'Password', 'inbox-status' ),
-				'description' => __( 'Password for you e-mail account.<br/> If using Gmail 2-step verification, use an <a href="https://support.google.com/accounts/answer/185833" target="_blank">application specific password</a>.', 'inbox-status' ),
+				'description' => __( 'Password for your e-mail account.<br/> If using Gmail 2-step verification, use an <a href="https://support.google.com/accounts/answer/185833" target="_blank">application specific password</a>.', 'inbox-status' ),
 				'default'     => '',
 				'type'        => 'password',
 				'section'     => 'login',
 			),
 		);
+	}
+
+	public function admin_enqueue_scripts( $page ) {
+
+		if ( 'settings_page_inbox-status' == $page ) {
+
+			wp_enqueue_script( 'is-admin-options', plugins_url( 'js/admin-options.js', IS_PLUGIN_FILE ), array( 'jquery' ), IS_VERSION, true );
+
+		}
+
 	}
 
 	public function admin_menu() {
@@ -215,11 +289,30 @@ class IS_Admin {
 	* Validate settings
 	*/
 	public function validate_settings( $input ) {
-		if ( true ) {
-			return $input;
+
+		// Provider
+		$provider = $input['provider'];
+
+		// IMAP server
+		if ( false === strpos( $input['imap_server'], 'http') ) {
+			$input['imap_server'] = 'http://' . $input['imap_server'];
+		}
+		$imap_server = parse_url( $input['imap_server'], PHP_URL_HOST );
+		if ( false === $imap_server ) {
+			$this->notices[] = __( 'Please enter a valid address for the IMAP server.', 'inbox_status' );
 		}
 
-		return false;
+		// Port
+		$port = ( !empty( $input['port'] ) ) ? (int) $input['port'] : 993;
+
+		// TLS
+		$tls = (int) $input['tls'];
+
+		$username = sanitize_text_field( $input['username'] );
+
+		$password = $input['password'];
+
+		return compact( 'provider', 'imap_server', 'port', 'tls', 'username', 'password' );
 	}
 
 	/**

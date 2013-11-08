@@ -21,30 +21,55 @@
 
 	<h3>Shortcodes</h3>
 
+	<p>For use in the WordPress post editor.</p>
+
 	<table class="shortcodes">
 		<thead>
 			<tr>
-				<th>Shortcode</th>
 				<th>Example</th>
 				<th>Output</th>
 			</tr>
 		</thead>
 		<tbody>
 			
-			<tr>
-				<td><code>[inbox-unread]</code></td>
-				<td>I have <code>[inbox-unread]</code> unread emails.</td>
-				<td>I have <code><?php echo do_shortcode( '[inbox-unread]' ); ?></code> unread emails.</td>
-			</tr>
+		<?php foreach ( $shortcodes as $key => $example ) : ?>
 
 			<tr>
-				<td><code>[inbox-total]</code></td>
-				<td>I have <code>[inbox-total]</code> total emails.</td>
-				<td>I have <code><?php echo do_shortcode( '[inbox-total]' ); ?></code> total emails.</td>
+				<td><?php echo $example ?></td>
+				<td><?php echo do_shortcode( $example ); ?></td>
 			</tr>
+
+		<?php endforeach; ?>
 
 		</tbody>
 	</table>
+
+	<h3>Actions</h3>
+
+	<p>For use in themes.</p>
+
+	<table class="shortcodes">
+		<thead>
+			<tr>
+				<th>Example</th>
+				<th>Output</th>
+			</tr>
+		</thead>
+		<tbody>
+		
+		<?php foreach ( $shortcodes as $type => $example ) : ?>
+			
+			<tr>
+				<td><code>&lt;?php do_action( 'inbox_status_count', '<?php echo $type ?>' ); ?&gt;</code></td>
+				<td><?php do_action( 'inbox_status_count', $type ); ?></td>
+			</tr>
+		
+
+		<?php endforeach; ?>
+
+		</tbody>
+	</table>
+
 
 </div>
 

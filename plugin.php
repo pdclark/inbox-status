@@ -42,6 +42,7 @@ if ( version_compare( $GLOBALS['wp_version'], '3.2', '>=' ) ) :
 	if ( !class_exists( 'Net_IMAP' ) ) {
 		require_once dirname( IS_PLUGIN_FILE ) . '/classes/PEAR/Net/IMAP.php';
 	}
+	require_once dirname( IS_PLUGIN_FILE ) . '/classes/class-imap.php';
 	require_once dirname( IS_PLUGIN_FILE ) . '/classes/class-email-widget.php';
 	require_once dirname( IS_PLUGIN_FILE ) . '/classes/class-shortcodes.php';
 	require_once dirname( IS_PLUGIN_FILE ) . '/classes/class-nav-menus.php';

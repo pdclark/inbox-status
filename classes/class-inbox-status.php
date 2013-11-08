@@ -46,7 +46,7 @@ class IS_Inbox_Status {
 	 * Don't access directly within this class.
 	 * Use $this->get_imap() instead.
 	 * 
-	 * @var Net_IMAP Pear IMAP library. Does not require PHP IMAP extension.
+	 * @var IS_IMAP Pear IMAP library. Does not require PHP IMAP extension.
 	 */
 	protected $imap;
 	
@@ -106,9 +106,8 @@ class IS_Inbox_Status {
 		// Widgets
 		add_action( 'widgets_init', array( $this, 'widgets_init' ) );
 
-		// Custom Actions (for use in themes)
-		add_action( 'inbox_status_unread_count', array( $this, 'unread_count' ) );
-		add_action( 'inbox_status_total_count', array( $this, 'total_count' ) );
+		// Custom Action (for use in themes)
+		add_action( 'inbox_status_count', array( $this, 'count' ) );
 
 		// Shortcodes
 		$this->shortcodes = new IS_Shortcodes();
@@ -122,12 +121,14 @@ class IS_Inbox_Status {
 	}
 
 	public function get_option( $key ) {
+
 		if ( isset( $this->options[ $key ] ) ) {
 
 			if ( 'tls' == $key )  { return (bool) $this->options[ $key ]; }
 			if ( 'port' == $key ) { return (int)  $this->options[ $key ]; }
 
 			return $this->options[ $key ];
+
 		}else {
 			return false;
 		}
@@ -182,10 +183,10 @@ class IS_Inbox_Status {
 		$success = $this->update_inbox();
 
 		$response = array(
-			'success' => (bool) $success,
-			'unread_count' => $this->get_option('unread-count'),
-			'total_count' => $this->get_option('total-count'),
-			'notices' => $this->admin->notices,
+			'success'      => (bool) $success,
+			'inbox_unread' => $this->get_option('inbox-unread'),
+			'inbox_total'  => $this->get_option('inbox-total'),
+			'notices'      => $this->admin->notices,
 		);
 
 		echo json_encode( $response );
@@ -214,18 +215,29 @@ class IS_Inbox_Status {
 			return false;
 		}
 
-		// Notices of failure set in get_imap >> pear_error_to_nice_error
+		// Notices of failure set in get_imap >> normalize_imap_error
 		$imap = $this->get_imap();
 
 		if ( false === $imap ) {
-			$this->options['unread-count'] = 0;
-			$this->options['total-count']  = 0;
+			// No connection. Reset all counts to 0
+			foreach ( $this->shortcodes->get_valid_keys() as $key ) {
+				$this->options[ $key ] = 0;
+			}
 			$this->options['last-updated'] = time();
 			return false;
 		}
 
-		$this->options['unread-count'] = $imap->getNumberOfUnSeenMessages();
-		$this->options['total-count']  = $imap->getNumberOfMessages();
+		$this->options['inbox-unread']     = $imap->getNumberOfUnSeenMessages();
+		$this->options['inbox-total']      = $imap->getNumberOfMessages();
+
+		$this->options['gmail-important']  = $imap->gmailSearchCount( 'is:important is:unread' );
+		$this->options['gmail-starred']    = $imap->gmailSearchCount( 'is:starred is:unread' );
+		$this->options['gmail-primary']    = $imap->gmailSearchCount( 'category:personal is:unread' );
+		$this->options['gmail-social']     = $imap->gmailSearchCount( 'category:social is:unread' );
+		$this->options['gmail-promotions'] = $imap->gmailSearchCount( 'category:promotions is:unread' );
+		$this->options['gmail-updates']    = $imap->gmailSearchCount( 'category:updates is:unread' );
+		$this->options['gmail-forums']     = $imap->gmailSearchCount( 'category:forums is:unread' );
+
 		$this->options['last-updated'] = time();
 
 		$this->notice( __('Connection successful!', 'inbox-status' ) );
@@ -234,55 +246,42 @@ class IS_Inbox_Status {
 		return update_option( self::OPTION_KEY, $this->options );
 	}
 
-	public function unread_count() {
-		echo $this->get_unread_count();
-	}
-
 	/**
-	 * @return int $unread Number of unread emails.
+	 * @param  $option Valid option key
+	 * @return int Number of emails for corresponding query.
 	 */
-	public function get_unread_count() {
+	public function get_count( $option = 'inbox-unread' ) {
 		// Check cache
-		if ( false !== $this->get_option( 'unread-count' ) ) {
-			return $this->get_option( 'unread-count' );
+		if ( false !== $this->get_option( $option ) ) {
+			return $this->get_option( $option );
 		}
 
 		// Nothing cached. Probably a first run, so query and cache.
 		$this->update_inbox();
 
-		return $this->get_option( 'unread-count' );
-	}
-
-	public function total_count() {
-		echo $this->get_total_count();
+		return $this->get_option( $option );
 	}
 
 	/**
-	 * @return int $total Total number of emails, read or unread.
+	 * Echo value returned from $this->get_count()
+	 * @param  $option Valid option key
+	 * @return void
 	 */
-	public function get_total_count() {
-		// Check cache
-		if ( false !== $this->get_option( 'total-count' ) ) {
-			return $this->get_option( 'total-count' );
-		}
-
-		// Nothing cached. Probably a first run, so query and cache.
-		$this->update_inbox();
-
-		return $this->get_option( 'total-count' );
+	public function count( $option = 'inbox-unread' ) {
+		echo $this->get_count( $option );
 	}
 
 	/**
-	 * @return Net_IMAP Conneted and authenticated IMAP object.
+	 * @return IS_IMAP Connected and authenticated IMAP object.
 	 */
 	public function get_imap() {
 		if ( !$this->have_credentials() ) { return false; }
 
-		if ( is_a( $this->imap, 'Net_IMAP' ) ) {
+		if ( is_a( $this->imap, 'IS_IMAP' ) ) {
 			return $this->imap;
 		}
 
-		$this->imap = new Net_IMAP(
+		$this->imap = new IS_IMAP(
 			$this->get_option( 'imap_server' ),
 			$this->get_option( 'port' ),
 			$this->get_option( 'tls' )
@@ -291,7 +290,7 @@ class IS_Inbox_Status {
 		$login = $this->imap->login( $this->get_option( 'username' ), $this->get_option( 'password' ) );
 
 		if ( is_a( $login, 'PEAR_Error' ) ) {
-			$this->pear_error_to_nice_error( $login );
+			$this->notice( $this->normalize_imap_error( $login ) );
 			return false;
 		}
 
@@ -315,32 +314,6 @@ class IS_Inbox_Status {
 	public function notice( $message ) {
 		$admin = $this->get_admin();
 		$admin->notices[] = $message;
-	}
-
-	/**
-	 * Convert cryptic PEAR IMAP errors to notices that might not scare people.
-	 * Add messages to notices
-	 * 
-	 * @param  PEAR_Error $login Error object
-	 * @return void
-	 */
-	public function pear_error_to_nice_error( $login ) {
-		switch ( $login->message ) {
-			case 'NO, [AUTHENTICATIONFAILED] Invalid credentials (Failure)': // Gmail
-			case 'NO, Invalid username or password.': // Outlook
-			case 'NO, [AUTHORIZATIONFAILED] Incorrect username or password. (#MBR1212)': // Yahoo
-			case 'NO, [AUTHENTICATIONFAILED] (#AUTH012) Incorrect username or password.': // Yahoo
-			case 'NO, [AUTHENTICATIONFAILED] Authentication failed': // iCloud
-			case 'NO, Invalid login or password': // AOL
-				$this->notice( __( 'Authentication failed. Please check your username and password.', 'inbox-status' ) );
-				break;
-			case 'not connected! (CMD:LOGIN)':
-				$this->notice( __( 'Could not connect to IMAP server. Please verify the server address and port are correct.', 'inbox-status' ) );
-				break;
-			default:
-				$this->notice( $login->message );
-				break;
-		}
 	}
 
 }

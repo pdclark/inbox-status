@@ -175,12 +175,16 @@ class IS_Inbox_Status {
 	 */
 	public function wp_ajax_update_inbox() {
 		
-		if ( $this->update_inbox() ) {
-			// Todo: Display full information from notices array.
-			_e( 'Inbox data updated.', IS_PLUGIN_SLUG );
-		}else {
-			_e( 'Update failed.', IS_PLUGIN_SLUG );
-		}
+		$success = $this->update_inbox();
+
+		$response = array(
+			'success' => (bool) $success,
+			'unread_count' => $this->get_option('unread-count'),
+			'total_count' => $this->get_option('total-count'),
+			'notices' => $this->admin->notices,
+		);
+
+		echo json_encode( $response );
 
 		exit;
 	}
@@ -189,8 +193,6 @@ class IS_Inbox_Status {
 	 * @return bool Whether username and password have been filled out in settings.
 	 */
 	public function have_credentials() {
-		// Todo: Add notice linking to settings requesting setup.
-
 		if ( false === $this->get_option('username') || false === $this->get_option('password') ) {
 			return false;
 		}
@@ -204,13 +206,31 @@ class IS_Inbox_Status {
 	 * @return bool Whether update succeeded or not.
 	 */
 	public function update_inbox() {
-		if ( !$this->have_credentials() ) { return false; }
+		if ( !$this->have_credentials() ) {
+			return false;
+		}
 
 		$imap = $this->get_imap();
+
+		if ( false === $imap ) {
+			return false;
+		}
 
 		$this->options['unread-count'] = $imap->getNumberOfUnSeenMessages();
 		$this->options['total-count']  = $imap->getNumberOfMessages();
 		$this->options['last-updated'] = time();
+
+		$message = sprintf(
+			__('Connection successful! Unread emails: %d. Total emails: %d. %sAdd a widget%s or %sadd a menu item%s.', 'inbox-status' ),
+			$this->options['unread-count'],
+			$this->options['total-count'],
+			'<a href="' . admin_url( 'widgets.php' ) . '">',
+			'</a>',
+			'<a href="' . admin_url( 'nav-menus.php' ) . '">',
+			'</a>'
+		);
+
+		$this->notice( $message );
 
 		// Update cache.
 		return update_option( self::OPTION_KEY, $this->options );
@@ -270,7 +290,12 @@ class IS_Inbox_Status {
 			true // TLS
 		);
 
-		$this->imap->login( $this->get_option( 'username' ), $this->get_option( 'password' ) );
+		$login = $this->imap->login( $this->get_option( 'username' ), $this->get_option( 'password' ) );
+
+		if ( is_a( $login, 'PEAR_Error' ) ) {
+			$this->pear_error_to_nice_error( $login );
+			return false;
+		}
 
 		return $this->imap;
 	}
@@ -287,6 +312,32 @@ class IS_Inbox_Status {
 		$this->admin = new IS_Admin();
 
 		return $this->admin;
+	}
+
+	public function notice( $message ) {
+		$admin = $this->get_admin();
+		$admin->notices[] = $message;
+	}
+
+	/**
+	 * Convert cryptic PEAR IMAP errors to notices that might not scare people.
+	 * Add messages to notices
+	 * 
+	 * @param  PEAR_Error $login Error object
+	 * @return void
+	 */
+	public function pear_error_to_nice_error( $login ) {
+		switch ( $login->message ) {
+			case 'NO, [AUTHENTICATIONFAILED] Invalid credentials (Failure)':
+				$this->notice( __( 'Authentication failed. Please check your username and password.', 'inbox-status' ) );
+				break;
+			case 'not connected! (CMD:LOGIN)':
+				$this->notice( __( 'Could not connect to IMAP server. Please verify the server address is correct. Please verify your IMAP server uses port 993 and TLS.', 'inbox-status' ) );
+				break;
+			default:
+				$this->notice( $login->message );
+				break;
+		}
 	}
 
 }

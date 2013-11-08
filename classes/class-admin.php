@@ -13,15 +13,40 @@ class IS_Admin {
 	 * @var array All settings
 	 */
 	var $settings;
+
+	/**
+	 * @var array Notices & errors to display to user.
+	 */
+	public $notices = array();
 	
 	function __construct() {
 
 		$this->sections_init(); 
 		$this->settings_init(); 
 		
+		add_action( 'admin_init', array( $this, 'request_setup' ) );
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
 
+		add_action( 'admin_notices', array( $this, 'admin_notices' ) );
+		add_action( 'load-settings_page_inbox-status', array( $this, 'load_settings_page_inbox_status' ) );
+
+	}
+
+	public function request_setup() {
+		if ( isset( $_GET['page'] ) && 'inbox-status' == $_GET['page'] ) {
+			return false;
+		}
+
+		$inbox = IS_Inbox_Status::get_instance();
+
+		if ( !$inbox->have_credentials() ) {
+			$this->notices[] = sprintf(
+				__( 'Please %senter your IMAP credentials%s to use Inbox Status.', 'inbox-status' ),
+				'<a href="' . admin_url( 'options-general.php?page=inbox-status' ) . '" >',
+				'</a>'
+			);
+		}
 	}
 
 	/**
@@ -79,6 +104,18 @@ class IS_Admin {
 			array( $this, 'admin_options' ) // Page display callback
 		);
 
+	}
+
+	/**
+	 * Run scripts on the admin settings page
+	 * Test & refresh the imap connection
+	 * 
+	 * @param  string $page Current page slug
+	 * @return void
+	 */
+	function load_settings_page_inbox_status() {
+		$inbox = IS_Inbox_Status::get_instance();
+		$inbox->update_inbox();
 	}
 
 	/**
@@ -183,6 +220,15 @@ class IS_Admin {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Output all notices that have been added to the $this->notices array
+	 */
+	public function admin_notices() {
+		foreach( $this->notices as $key => $message ) {
+			echo "<div class='updated fade' id='inbox-status-$key'><p>$message</p></div>";
+		}
 	}
 
 }

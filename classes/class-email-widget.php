@@ -11,7 +11,7 @@ class IS_Email_Widget extends WP_Widget {
 	);
 
 	public function __construct() {
-		parent::WP_Widget( false, $name = __( IS_PLUGIN_NAME . ' – Email Count', IS_PLUGIN_SLUG ) );
+		parent::WP_Widget( false, $name = __( 'Inbox Status – Email Count', 'inbox-status' ) );
 	}
 
 	/**

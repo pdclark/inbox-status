@@ -24,11 +24,10 @@ class IS_Nav_Menus {
 
 		if ( 'nav-menus.php' == $page ) {
 
-			wp_enqueue_script( 'is-nav-menus', plugins_url( 'js/nav-menus.js', IS_PLUGIN_FILE ), array( 'jquery' ), IS_VERSION, true );
+			wp_enqueue_script( 'is-admin-nav-menus', plugins_url( 'js/admin-nav-menus.js', IS_PLUGIN_FILE ), array( 'jquery' ), IS_VERSION, true );
 
-			wp_localize_script( 'is-nav-menus', 'InboxStatusAdmin', array(
-				'slug' => IS_PLUGIN_SLUG,
-				'url_default' => __( 'Optional', IS_PLUGIN_SLUG ),
+			wp_localize_script( 'is-admin-nav-menus', 'InboxStatusAdmin', array(
+				'url_default' => __( 'Optional', 'inbox-status' ),
 			) );
 
 			add_meta_box( 'add-inbox-status', IS_PLUGIN_NAME, array( $this, 'meta_box' ), 'nav-menus', 'side', 'default' );
@@ -59,7 +58,7 @@ class IS_Nav_Menus {
 	}
 
 	public function is_targeted_menu_item( $item ) {
-		if ( in_array( IS_PLUGIN_SLUG, $item->classes ) ) {
+		if ( in_array( 'inbox-status', $item->classes ) ) {
 			return true;
 		}
 		return false;
@@ -72,10 +71,13 @@ class IS_Nav_Menus {
 	 */
 	function meta_box( $object ) {
 		global $_nav_menu_placeholder, $nav_menu_selected_id;
+		$inbox = IS_Inbox_Status::get_instance();
 
 		$_nav_menu_placeholder = 0 > $_nav_menu_placeholder ? $_nav_menu_placeholder - 1 : -1;
 
-		$template_args = compact( '_nav_menu_placeholder', 'nav_menu_selected_id' );
+		$shortcodes = $inbox->shortcodes->shortcodes;
+
+		$template_args = compact( 'shortcodes', '_nav_menu_placeholder', 'nav_menu_selected_id' );
 		IS_Inbox_Status::get_template( 'nav-menu-meta-box', $template_args );
 
 	}

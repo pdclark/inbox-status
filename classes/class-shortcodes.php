@@ -1,27 +1,49 @@
 <?php
 
 class IS_Shortcodes {
-	/**
-	 * @var IS_Inbox_Status Reference to Inbox Status controller.
-	 */
-	var $inbox;
+
+	public $shortcodes = array(
+		// Generic
+		'inbox-unread'     => '<code>[inbox-unread]</code> unread emails',
+		'inbox-total'      => '<code>[inbox-total]</code> total emails',
+
+		// Gmail
+		'gmail-important'  => '<code>[gmail-important]</code> important emails',
+		'gmail-starred'    => '<code>[gmail-starred]</code> starred emails',
+		'gmail-primary'    => '<code>[gmail-primary]</code> primary emails',
+		'gmail-social'     => '<code>[gmail-social]</code> social emails',
+		'gmail-promotions' => '<code>[gmail-promotions]</code> promotional emails',
+		'gmail-updates'    => '<code>[gmail-updates]</code> update emails',
+		'gmail-forums'     => '<code>[gmail-forums]</code> forum emails',
+	);
 
 	public function __construct() {
-		$this->inbox = IS_Inbox_Status::get_instance();
+		/**
+		 * Tie each shortcode key with the corresponding method in this class.
+		 * Allow shortcodes to use hyphens or underscores.
+		 */
+		foreach( $this->shortcodes as $id => $meta ) {
+			$alternate = str_replace( '-', '_', $id );
 
-		add_shortcode( 'inbox-unread',  array( $this, 'inbox_unread' ) );
-		add_shortcode( 'inbox_unread',  array( $this, 'inbox_unread' ) );
-
-		add_shortcode( 'inbox-total',  array( $this, 'inbox_total' ) );
-		add_shortcode( 'inbox_total',  array( $this, 'inbox_total' ) );
+			add_shortcode( $id, array( $this, 'do_shortcode' ) );
+			add_shortcode( $alternate, array( $this, 'do_shortcode' ) );
+		}
 	}
 
-	public function inbox_unread() {
-		return '<span class="is-unread-count">' . $this->inbox->get_unread_count() . '</span>';
+	public function get_valid_keys() {
+		return array_keys( $this->shortcodes );
 	}
 
-	public function inbox_total() {
-		return '<span class="is-total-count">' .$this->inbox->get_total_count() . '</span>';
+	public function do_shortcode( $attr, $null, $tag ) {
+		$inbox = IS_Inbox_Status::get_instance();
+
+		$tag = str_replace( '_', '-', $tag );
+
+		$output = "<span class='is-$tag'>" .
+		            $inbox->get_count( $tag ) . 
+		          '</span>';
+		
+		return $output;
 	}
 	
 }

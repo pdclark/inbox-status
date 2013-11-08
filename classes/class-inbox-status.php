@@ -15,7 +15,7 @@ class IS_Inbox_Status {
 	/**
 	 * @var string Key for plugin options in wp_options table
 	 */
-	const OPTION_KEY = IS_PLUGIN_SLUG;
+	const OPTION_KEY = 'inbox-status';
 
 	/**
 	 * @var int How often should inbox data be updated, in seconds.
@@ -46,7 +46,7 @@ class IS_Inbox_Status {
 	 * Don't access directly within this class.
 	 * Use $this->get_imap() instead.
 	 * 
-	 * @var Net_IMAP Pear IMAP library. Does not require PHP IMAP extension.
+	 * @var IS_IMAP Pear IMAP library. Does not require PHP IMAP extension.
 	 */
 	protected $imap;
 	
@@ -106,9 +106,8 @@ class IS_Inbox_Status {
 		// Widgets
 		add_action( 'widgets_init', array( $this, 'widgets_init' ) );
 
-		// Custom Actions (for use in themes)
-		add_action( 'inbox_status_unread_count', array( $this, 'unread_count' ) );
-		add_action( 'inbox_status_total_count', array( $this, 'total_count' ) );
+		// Custom Action (for use in themes)
+		add_action( 'inbox_status_count', array( $this, 'count' ) );
 
 		// Shortcodes
 		$this->shortcodes = new IS_Shortcodes();
@@ -122,8 +121,14 @@ class IS_Inbox_Status {
 	}
 
 	public function get_option( $key ) {
+
 		if ( isset( $this->options[ $key ] ) ) {
+
+			if ( 'tls' == $key )  { return (bool) $this->options[ $key ]; }
+			if ( 'port' == $key ) { return (int)  $this->options[ $key ]; }
+
 			return $this->options[ $key ];
+
 		}else {
 			return false;
 		}
@@ -140,9 +145,9 @@ class IS_Inbox_Status {
 		extract( $args );
 
 		$locations = array(
-			'admin_file' => IS_PLUGIN_DIR . "/templates/admin/$file.php",
+			'admin_file' => dirname( IS_PLUGIN_FILE ) . "/templates/admin/$file.php",
 			'theme_file' => get_stylesheet_directory() . "/inbox-status-theme/$file.php",
-			'plugin_file' => IS_PLUGIN_DIR . "/templates/inbox-status-theme/$file.php",
+			'plugin_file' => dirname( IS_PLUGIN_FILE ) . "/templates/inbox-status-theme/$file.php",
 		);
 
 		foreach ( $locations as $file ) {
@@ -175,12 +180,16 @@ class IS_Inbox_Status {
 	 */
 	public function wp_ajax_update_inbox() {
 		
-		if ( $this->update_inbox() ) {
-			// Todo: Display full information from notices array.
-			_e( 'Inbox data updated.', IS_PLUGIN_SLUG );
-		}else {
-			_e( 'Update failed.', IS_PLUGIN_SLUG );
-		}
+		$success = $this->update_inbox();
+
+		$response = array(
+			'success'      => (bool) $success,
+			'inbox_unread' => $this->get_option('inbox-unread'),
+			'inbox_total'  => $this->get_option('inbox-total'),
+			'notices'      => $this->admin->notices,
+		);
+
+		echo json_encode( $response );
 
 		exit;
 	}
@@ -189,8 +198,6 @@ class IS_Inbox_Status {
 	 * @return bool Whether username and password have been filled out in settings.
 	 */
 	public function have_credentials() {
-		// Todo: Add notice linking to settings requesting setup.
-
 		if ( false === $this->get_option('username') || false === $this->get_option('password') ) {
 			return false;
 		}
@@ -204,73 +211,88 @@ class IS_Inbox_Status {
 	 * @return bool Whether update succeeded or not.
 	 */
 	public function update_inbox() {
-		if ( !$this->have_credentials() ) { return false; }
+		if ( !$this->have_credentials() ) {
+			return false;
+		}
 
+		// Notices of failure set in get_imap >> normalize_imap_error
 		$imap = $this->get_imap();
 
-		$this->options['unread-count'] = $imap->getNumberOfUnSeenMessages();
-		$this->options['total-count']  = $imap->getNumberOfMessages();
+		if ( false === $imap ) {
+			// No connection. Reset all counts to 0
+			foreach ( $this->shortcodes->get_valid_keys() as $key ) {
+				$this->options[ $key ] = 0;
+			}
+			$this->options['last-updated'] = time();
+			return false;
+		}
+
+		$this->options['inbox-unread']     = $imap->getNumberOfUnSeenMessages();
+		$this->options['inbox-total']      = $imap->getNumberOfMessages();
+
+		$this->options['gmail-important']  = $imap->gmailSearchCount( 'is:important is:unread' );
+		$this->options['gmail-starred']    = $imap->gmailSearchCount( 'is:starred is:unread' );
+		$this->options['gmail-primary']    = $imap->gmailSearchCount( 'category:personal is:unread' );
+		$this->options['gmail-social']     = $imap->gmailSearchCount( 'category:social is:unread' );
+		$this->options['gmail-promotions'] = $imap->gmailSearchCount( 'category:promotions is:unread' );
+		$this->options['gmail-updates']    = $imap->gmailSearchCount( 'category:updates is:unread' );
+		$this->options['gmail-forums']     = $imap->gmailSearchCount( 'category:forums is:unread' );
+
 		$this->options['last-updated'] = time();
+
+		$this->notice( __('Connection successful!', 'inbox-status' ) );
 
 		// Update cache.
 		return update_option( self::OPTION_KEY, $this->options );
 	}
 
-	public function unread_count() {
-		echo $this->get_unread_count();
-	}
-
 	/**
-	 * @return int $unread Number of unread emails.
+	 * @param  $option Valid option key
+	 * @return int Number of emails for corresponding query.
 	 */
-	public function get_unread_count() {
+	public function get_count( $option = 'inbox-unread' ) {
 		// Check cache
-		if ( false !== $this->get_option( 'unread-count' ) ) {
-			return $this->get_option( 'unread-count' );
+		if ( false !== $this->get_option( $option ) ) {
+			return $this->get_option( $option );
 		}
 
 		// Nothing cached. Probably a first run, so query and cache.
 		$this->update_inbox();
 
-		return $this->get_option( 'unread-count' );
-	}
-
-	public function total_count() {
-		echo $this->get_total_count();
+		return $this->get_option( $option );
 	}
 
 	/**
-	 * @return int $total Total number of emails, read or unread.
+	 * Echo value returned from $this->get_count()
+	 * @param  $option Valid option key
+	 * @return void
 	 */
-	public function get_total_count() {
-		// Check cache
-		if ( false !== $this->get_option( 'total-count' ) ) {
-			return $this->get_option( 'total-count' );
-		}
-
-		// Nothing cached. Probably a first run, so query and cache.
-		$this->update_inbox();
-
-		return $this->get_option( 'total-count' );
+	public function count( $option = 'inbox-unread' ) {
+		echo $this->get_count( $option );
 	}
 
 	/**
-	 * @return Net_IMAP Conneted and authenticated IMAP object.
+	 * @return IS_IMAP Connected and authenticated IMAP object.
 	 */
 	public function get_imap() {
 		if ( !$this->have_credentials() ) { return false; }
 
-		if ( is_a( $this->imap, 'Net_IMAP' ) ) {
+		if ( is_a( $this->imap, 'IS_IMAP' ) ) {
 			return $this->imap;
 		}
 
-		$this->imap = new Net_IMAP(
+		$this->imap = new IS_IMAP(
 			$this->get_option( 'imap_server' ),
-			993,  // Port
-			true // TLS
+			$this->get_option( 'port' ),
+			$this->get_option( 'tls' )
 		);
 
-		$this->imap->login( $this->get_option( 'username' ), $this->get_option( 'password' ) );
+		$login = $this->imap->login( $this->get_option( 'username' ), $this->get_option( 'password' ) );
+
+		if ( is_a( $login, 'PEAR_Error' ) ) {
+			$this->notice( $this->normalize_imap_error( $login ) );
+			return false;
+		}
 
 		return $this->imap;
 	}
@@ -287,6 +309,11 @@ class IS_Inbox_Status {
 		$this->admin = new IS_Admin();
 
 		return $this->admin;
+	}
+
+	public function notice( $message ) {
+		$admin = $this->get_admin();
+		$admin->notices[] = $message;
 	}
 
 }

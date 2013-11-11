@@ -11,8 +11,8 @@
 				.attr('checked', false)
 				.filter('[value="' + json.tls + '"]').attr('checked', true);
 
-			if ( 'Other' == $(this).find('option:selected').text() ) {
-				this.showAdvanced();
+			if ( 'Other' == $(this).find('option:selected').text().trim() ) {
+				inboxAdminOptions.showAdvanced();
 			}
 
 		},

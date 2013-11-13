@@ -5,7 +5,7 @@ Author URI: http://brainstormmedia.com
 Tags: email, mail, imap, inbox, unread, gmail, yahoo, icloud, outlook, aol
 Requires at least: 3.4
 Tested up to: 3.7.1
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -57,6 +57,9 @@ Retrieve information from your email inbox over IMAP, then display information, 
 
 == Changelog ==
 
+= 1.1.2 =
+* Fix: Resolve fatal error for IMAP notices.
+
 = 1.1.1 =
 * Fix: Automatically show advanced options when "Other" email provider is selected.
 
@@ -72,5 +75,5 @@ Retrieve information from your email inbox over IMAP, then display information, 
 
 == Upgrade Notice ==
 
-= 1.1.1 =
-* Fix: Automatically show advanced options when "Other" email provider is selected.
+= 1.1.2 =
+* Fix: Resolve fatal error for IMAP notices.

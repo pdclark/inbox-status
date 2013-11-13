@@ -290,7 +290,7 @@ class IS_Inbox_Status {
 		$login = $this->imap->login( $this->get_option( 'username' ), $this->get_option( 'password' ) );
 
 		if ( is_a( $login, 'PEAR_Error' ) ) {
-			$this->notice( $this->normalize_imap_error( $login ) );
+			$this->notice( $this->imap->normalize_imap_error( $login ) );
 			return false;
 		}
 

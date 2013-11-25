@@ -162,7 +162,7 @@ class IS_Admin {
 
 		if ( 'settings_page_inbox-status' == $page ) {
 
-			wp_enqueue_script( 'is-admin-options', plugins_url( 'js/admin-options.js', IS_PLUGIN_FILE ), array( 'jquery' ), IS_VERSION, true );
+			wp_enqueue_script( 'is-admin-options', plugins_url( 'js/admin-options.js', IS_PLUGIN_FILE ), array( 'jquery' ), IS_PLUGIN_VERSION, true );
 
 		}
 

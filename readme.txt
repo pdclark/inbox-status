@@ -1,7 +1,7 @@
 === Inbox Status ===
-Contributors: brainstormmedia, pdclark, blobaugh
-Plugin URI: https://github.com/brainstormmedia/inbox-status
-Author URI: http://brainstormmedia.com
+Contributors: 10up, pdclark, blobaugh
+Plugin URI: https://github.com/10up/inbox-status
+Author URI: http://pdclark.com
 Tags: email, mail, imap, inbox, unread, gmail, yahoo, icloud, outlook, aol
 Requires at least: 3.4
 Tested up to: 3.7.1

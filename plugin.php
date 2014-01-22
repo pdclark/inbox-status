@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: Inbox Status 
-Plugin URI: https://github.com/brainstormmedia/inbox-status
+Plugin URI: https://github.com/10up/inbox-status
 Description: Easy widget and functions to show email counts in your theme (like unread email).
 Version: 1.1
-Author: Brainstorm Media
-Author URI: http://brainstormmedia.com
+Author: Paul Clark, 10up
+Author URI: http://pdclark.com
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 */

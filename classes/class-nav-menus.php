@@ -58,7 +58,7 @@ class IS_Nav_Menus {
 	}
 
 	public function is_targeted_menu_item( $item ) {
-		if ( in_array( 'inbox-status', $item->classes ) ) {
+		if ( in_array( 'inbox-status', (array) $item->classes ) ) {
 			return true;
 		}
 		return false;

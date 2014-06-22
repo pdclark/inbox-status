@@ -5,7 +5,7 @@ Author URI: http://pdclark.com
 Tags: email, mail, imap, inbox, unread, gmail, yahoo, icloud, outlook, aol
 Requires at least: 3.4
 Tested up to: 3.9
-Stable tag: 1.1.4
+Stable tag: 1.1.5
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -57,6 +57,9 @@ Retrieve information from your email inbox over IMAP, then display information, 
 
 == Changelog ==
 
+= 1.1.5 =
+* Fix: (Minor) Avoid edge-case error output by typecasting array. Thanks @obo236.
+
 = 1.1.4 =
 * Fix: Widget output.
 
@@ -81,5 +84,5 @@ Retrieve information from your email inbox over IMAP, then display information, 
 
 == Upgrade Notice ==
 
-= 1.1.4 =
-* Fix: Widget output.
+= 1.1.5 =
+* Fix: (Minor) Avoid edge-case error output by typecasting array. Thanks @obo236.

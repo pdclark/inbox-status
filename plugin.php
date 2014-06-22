@@ -3,7 +3,7 @@
 Plugin Name: Inbox Status 
 Plugin URI: https://github.com/10up/inbox-status
 Description: Easy widget and functions to show email counts in your theme (like unread email).
-Version: 1.1.4
+Version: 1.1.5
 Author: Paul Clark, 10up
 Author URI: http://pdclark.com
 License: GPLv2

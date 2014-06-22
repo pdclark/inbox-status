@@ -4,7 +4,7 @@ Plugin URI: https://github.com/10up/inbox-status
 Author URI: http://pdclark.com
 Tags: email, mail, imap, inbox, unread, gmail, yahoo, icloud, outlook, aol
 Requires at least: 3.4
-Tested up to: 3.7.1
+Tested up to: 3.9
 Stable tag: 1.1.4
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html

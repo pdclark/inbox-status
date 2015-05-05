@@ -1,10 +1,10 @@
 <?php
 /*
 Plugin Name: Inbox Status 
-Plugin URI: https://github.com/10up/inbox-status
+Plugin URI: https://github.com/pdclark/inbox-status
 Description: Easy widget and functions to show email counts in your theme (like unread email).
 Version: 1.1.5
-Author: Paul Clark, 10up
+Author: Paul Clark
 Author URI: http://pdclark.com
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
